@@ -133,3 +133,4 @@ Monitor and Manage:
 
 Configure CloudWatch for logging and monitoring.
 Set up alerts for critical metrics.
+
