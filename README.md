@@ -1,136 +1,164 @@
-# LetsHangOut
+# Full Stack Application Deployment on Google Cloud
 
-High-Level Architecture
-User Interface (UI):
+## High-Level Architecture
 
-Technology: React (front-end framework)
-Purpose: Provides the interface through which users interact with the application.
-API Gateway:
+### User Interface (UI)
+- **Technology:** React (front-end framework)
+- **Purpose:** Provides the interface through which users interact with the application.
 
-Technology: Amazon API Gateway (optional)
-Purpose: Manages and routes HTTP requests from the UI to the back-end services.
-Back-End Services:
+### API Gateway (Optional)
+- **Technology:** Google Cloud Endpoints
+- **Purpose:** Manages and routes HTTP requests from the UI to the back-end services, providing additional security features like request throttling and authentication.
 
-Technology: Node.js with Express (back-end framework)
-Purpose: Handles business logic, processes requests, and interacts with the database.
-Database:
+### Back-End Services
+- **Technology:** Go with Gin (web framework)
+- **Purpose:** Handles business logic, processes requests, and interacts with the database.
 
-Technology: Amazon DynamoDB (NoSQL database)
-Purpose: Stores application data, such as user information, lobbies, availability, and votes.
-Containerization and Orchestration:
+### Database
+- **Technology:** Google Cloud Firestore (NoSQL database)
+- **Purpose:** Stores application data, such as user information, lobbies, availability, and votes.
 
-Technology: Docker, AWS Fargate (serverless container orchestration)
-Purpose: Containerizes the application and orchestrates the deployment and scaling of containers.
-Continuous Integration and Continuous Deployment (CI/CD):
+### Containerization and Orchestration
+- **Technology:** Docker, Google Kubernetes Engine (GKE)
+- **Purpose:** Containerizes the application and orchestrates the deployment and scaling of containers.
 
-Technology: AWS CodePipeline, AWS CodeBuild
-Purpose: Automates the build, test, and deployment processes.
-Monitoring and Logging:
+### Continuous Integration and Continuous Deployment (CI/CD)
+- **Technology:** Google Cloud Build, Google Cloud Deploy
+- **Purpose:** Automates the build, test, and deployment processes.
 
-Technology: Amazon CloudWatch
-Purpose: Monitors application performance, logs events, and sets up alerts for specific metrics.
-Detailed System Design
-1. User Interface (UI)
-Components:
+### Monitoring and Logging
+- **Technology:** Google Cloud Monitoring, Google Cloud Logging
+- **Purpose:** Monitors application performance, logs events, and sets up alerts for specific metrics.
 
-Lobby Creation: Allows users to create a new lobby with a unique code.
-Calendar: Allows users to select their availability.
-Propose Places: Allows users to propose meeting places.
-Voting System: Allows users to vote on proposed places.
-Interactions:
+## Detailed System Design
 
-User actions trigger API calls to the back-end services.
-Responses from the back-end are rendered in the UI.
-2. API Gateway (Optional)
-Role:
-Manages HTTP requests and routes them to the appropriate back-end services.
-Provides additional security features, such as request throttling and authentication.
-3. Back-End Services
-Components:
+### User Interface (UI) Components
+- **Lobby Creation:** Allows users to create a new lobby with a unique code.
+- **Calendar:** Allows users to select their availability.
+- **Propose Places:** Allows users to propose meeting places.
+- **Voting System:** Allows users to vote on proposed places.
 
-Authentication: Handles user registration and login using JWT.
-Lobby Management: Manages lobby creation, retrieval, and updates.
-Availability Management: Manages user availability data.
-Voting Management: Manages proposal and voting data.
-Interactions:
+**Interactions:**
+- User actions trigger API calls to the back-end services.
+- Responses from the back-end are rendered in the UI.
 
-Receives HTTP requests from the UI or API Gateway.
-Processes requests, performs business logic, and interacts with the database.
-Sends responses back to the UI or API Gateway.
-4. Database
-Tables:
+### API Gateway (Optional)
+- **Role:** Manages HTTP requests and routes them to the appropriate back-end services.
+- **Security:** Provides additional security features, such as request throttling and authentication.
 
-Users: Stores user information.
-Lobbies: Stores lobby details.
-Availability: Stores user availability for each lobby.
-Votes: Stores proposed places and votes.
-Interactions:
+### Back-End Services Components
+- **Authentication:** Handles user registration and login using JWT.
+- **Lobby Management:** Manages lobby creation, retrieval, and updates.
+- **Availability Management:** Manages user availability data.
+- **Voting Management:** Manages proposal and voting data.
 
-Back-end services perform CRUD operations on the database.
-Data is retrieved, stored, updated, or deleted based on business logic.
-5. Containerization and Orchestration
-Docker:
+**Interactions:**
+- Receives HTTP requests from the UI or API Gateway.
+- Processes requests, performs business logic, and interacts with the database.
+- Sends responses back to the UI or API Gateway.
 
-Containerizes the front-end and back-end applications for consistency across different environments.
-Dockerfiles define the environment and dependencies for each application.
-AWS Fargate:
+### Database Tables
+- **Users:** Stores user information.
+- **Lobbies:** Stores lobby details.
+- **Availability:** Stores user availability for each lobby.
+- **Votes:** Stores proposed places and votes.
 
-Manages the deployment, scaling, and load balancing of Docker containers.
-Removes the need to manage underlying server infrastructure.
-6. Continuous Integration and Continuous Deployment (CI/CD)
-AWS CodePipeline:
+**Interactions:**
+- Back-end services perform CRUD operations on the database.
+- Data is retrieved, stored, updated, or deleted based on business logic.
 
-Automates the end-to-end build, test, and deployment process.
-Triggers builds and deployments based on code changes in the source repository.
-AWS CodeBuild:
+### Containerization and Orchestration
 
-Builds the Docker images for the front-end and back-end applications.
-Runs tests to ensure code quality and functionality.
-7. Monitoring and Logging
-Amazon CloudWatch:
-Collects and stores logs from the application and infrastructure.
-Monitors metrics such as CPU usage, memory usage, and response times.
-Sets up alarms to notify when specific thresholds are breached.
-Diagram
-Here’s a high-level diagram of the architecture:
+**Docker:**
+- Containerizes the front-end and back-end applications for consistency across different environments.
+- Dockerfiles define the environment and dependencies for each application.
 
-plaintext
-Copy code
-  +------------------+       +------------------+      +--------------------+
-  |   User Interface | <-->  |   API Gateway    | <--> |  Back-End Services  |
-  |  (React Front-End)|      |  (Optional, API  |      | (Node.js + Express)|
-  +------------------+       |    Management)   |      +--------------------+
-          |                       /        \                |
-          |                      /          \               |
-          V                     /            \              V
-  +------------------+      +------------------+     +------------------+
-  | Continuous Integration | | Container Orchestration| |   Monitoring & Logging |
-  |    (CodePipeline)      | |       (Fargate)       | |    (CloudWatch)       |
-  +------------------+      +------------------+     +------------------+
-                                      |
-                                      V
-                             +------------------+
-                             |    Database      |
-                             |  (DynamoDB)      |
-                             +------------------+
-Practical Steps
-Set Up Your Development Environment:
+**Google Kubernetes Engine (GKE):**
+- Manages the deployment, scaling, and load balancing of Docker containers.
+- Removes the need to manage underlying server infrastructure.
 
-Install Node.js, npm, and Docker.
-Initialize the React front-end and Node.js back-end projects.
-Define Infrastructure as Code:
+### Continuous Integration and Continuous Deployment (CI/CD)
 
-Use Terraform or AWS CloudFormation to define your AWS infrastructure (ECS cluster, Fargate services, DynamoDB tables).
-Implement CI/CD Pipelines:
+**Google Cloud Build:**
+- Automates the end-to-end build, test, and deployment process.
+- Triggers builds and deployments based on code changes in the source repository.
 
-Set up AWS CodePipeline and CodeBuild to automate the build and deployment process.
-Write a buildspec.yml file for CodeBuild.
-Deploy the Application:
+**Google Cloud Deploy:**
+- Deploys the application to GKE.
 
-Push Docker images to Amazon ECR.
-Deploy the application to AWS Fargate.
-Monitor and Manage:
+### Monitoring and Logging
 
-Configure CloudWatch for logging and monitoring.
-Set up alerts for critical metrics.
+**Google Cloud Monitoring:**
+- Collects and stores logs from the application and infrastructure.
+- Monitors metrics such as CPU usage, memory usage, and response times.
+- Sets up alarms to notify when specific thresholds are breached.
 
+## Practical Steps
+
+### Set Up Your Development Environment
+
+1. **Install Dependencies:**
+   - Node.js and npm for React.
+   - Go for backend development.
+   - Docker for containerization.
+
+2. **Initialize Projects:**
+   - **React Front-End:**
+     ```bash
+     npx create-react-app my-app
+     cd my-app
+     ```
+
+   - **Go Back-End:**
+     ```bash
+     mkdir backend
+     cd backend
+     go mod init backend
+     go get github.com/gin-gonic/gin
+     ```
+
+### Define Infrastructure as Code
+
+Use Terraform or Google Cloud Deployment Manager to define your GCP infrastructure.
+
+**Example Terraform Configuration:**
+```hcl
+provider "google" {
+  project = "your-gcp-project-id"
+  region  = "us-central1"
+}
+
+resource "google_container_cluster" "primary" {
+  name     = "my-gke-cluster"
+  location = "us-central1"
+
+  initial_node_count = 3
+
+  node_config {
+    machine_type = "e2-medium"
+  }
+}
+
+resource "google_container_node_pool" "primary_nodes" {
+  name       = "primary-node-pool"
+  location   = "us-central1"
+  cluster    = google_container_cluster.primary.name
+
+  node_config {
+    preemptible  = true
+    machine_type = "e2-medium"
+    oauth_scopes = [
+      "https://www.googleapis.com/auth/cloud-platform",
+    ]
+  }
+
+  initial_node_count = 3
+}
+
+resource "google_firestore_document" "default" {
+  collection = "settings"
+  document_id = "default"
+  fields = jsonencode({
+    "exampleField" = "exampleValue"
+  })
+}
