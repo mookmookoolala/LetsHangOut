@@ -1,122 +1,136 @@
-# Let's Hang Out
-## Overview
-Let's Hang Out is a full-stack web application designed to help friends coordinate their hangouts by proposing and voting on available dates and places. The frontend is built with React, and the backend is built with Go, both containerized using Docker and deployed on a Kubernetes cluster.
+# Letshangout Application
 
-### Project Structure
-```
-my-project/
-├── react-app/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── Home.js
-│   │   │   ├── About.js
-│   │   │   ├── Contact.js
-│   │   ├── App.js
-│   ├── public/
-│   ├── Dockerfile
-│   ├── package.json
-├── go-backend/
-│   ├── main.go
-│   ├── Dockerfile
-│   ├── go.mod
-│   ├── go.sum
-├── react-deployment.yaml
-├── go-deployment.yaml
-├── README.md
-```
+A full-stack application with a React frontend and Go backend.
 
-### Prerequisites
-Docker
-Kubernetes (Minikube)
-Node.js
-Go
-NGINX (optional for custom domain)
-Setup Instructions
-Bold text and bullet points are used for emphasis in these steps.
+## Project Structure
 
-#### 1. Clone the Repository
-```
-git clone https://github.com/your-username/my-project.git
-cd my-project
-```
+- `go-backend/`: Go backend API server
+- `react-app/`: React frontend application
+- `mysql/`: MySQL database configuration
 
-#### 2. Build Docker Images
-React App:
+## Prerequisites
 
-```
-cd react-app
-docker build -t your-docker-username/react-app:latest .
-cd ..
-```
+- Docker and Docker Compose (for local development)
+- Kubernetes or Minikube (for deployment)
+- Node.js and npm (for frontend development)
+- Go (for backend development)
 
-Go Backend:
+## Local Development
 
-```
-cd go-backend
-docker build -t your-docker-username/go-backend:latest .
-cd ..
-```
+### Backend (Go)
 
-#### Optional: Push Docker Images to Docker Hub
+1. Navigate to the backend directory:
+   ```
+   cd go-backend
+   ```
 
-If you plan to deploy the application to a remote server, follow these steps to push the images to your Docker Hub account:
+2. Run the Go application:
+   ```
+   go run main.go
+   ```
 
-Tag the images with your username:
-```
-docker tag react-app:latest your-docker-username/react-app:latest
-docker tag go-backend:latest your-docker-username/go-backend:latest
-```
+   The backend will be available at http://localhost:8080
 
-Push the images to Docker Hub:
-```
-docker push your-docker-username/react-app:latest
-docker push your-docker-username/go-backend:latest
-```
+### Frontend (React)
 
-#### 4. Deploy to Kubernetes
-Deploy the React and Go backend services using the provided YAML files:
+1. Navigate to the frontend directory:
+   ```
+   cd react-app
+   ```
 
-```
-kubectl apply -f react-deployment.yaml
-kubectl apply -f go-deployment.yaml
+2. Install dependencies:
+   ```
+   npm install
+   ```
+
+3. Start the development server:
+   ```
+   npm start
+   ```
+
+   The frontend will be available at http://localhost:3000
+
+## Kubernetes Deployment
+
+### Standard Kubernetes
+
+1. Build the Docker images:
+   ```
+   docker build -t go-backend:latest ./go-backend
+   docker build -t react-app:latest ./react-app
+   ```
+
+2. Apply the Kubernetes configurations:
+   ```
+   kubectl apply -f mysql/mysql-deployment.yaml
+   kubectl apply -f go-backend/go-deployment.yaml
+   kubectl apply -f react-app/react-deployment.yaml
+   ```
+
+3. Access the application:
+   - Frontend: http://[node-ip]:30001
+   - Backend API: http://[node-ip]:30002
+
+### Minikube Deployment
+
+For a quick setup with Minikube, use the provided script:
+
+```bash
+./minikube-setup.sh
 ```
 
-#### 5. Configure and Restart NGINX (Optional)
-This step is only necessary if you want to access the application using a custom domain.
+This script automates the entire deployment process for Minikube and handles driver selection:
 
-Update the /etc/nginx/nginx.conf file to route requests to the Minikube services. Refer to the NGINX Configuration file for detailed instructions on configuration.
+- If running as a regular user, it will use the Docker driver (recommended)
+- If running as root, it will prompt you to choose between:
+  - Using the 'none' driver (recommended for root users)
+  - Forcing the Docker driver with root (not recommended)
+  - Exiting to run as a non-root user
+
+**Note**: The Docker driver should not be used with root privileges. If you're running as root, the script will guide you through the appropriate options.
+
+For detailed instructions and troubleshooting for Minikube deployment, see the [Minikube Guide](./MINIKUBE.md).
+
+### Using the Helper Script
+
+For convenience, you can use the provided `run.sh` script:
 
 ```
-sudo systemctl restart nginx
+# For standard Kubernetes deployment
+./run.sh k8s
+
+# For Minikube deployment
+./run.sh minikube
+
+# For local development with Docker Compose
+./run.sh docker
+
+# For running locally without containers
+./run.sh local
 ```
 
-Access the Application
-Open your browser and navigate to http://yourdomain.com (or your Minikube IP address if using a local deployment) to view the React application.
+## API Endpoints
 
-### Technologies Used
-```
-Frontend: React
-Backend: Go
-Containerization: Docker
-Orchestration: Kubernetes
-Reverse Proxy: NGINX (optional)
-```
+- `GET /`: Welcome message
+- `GET /api`: Returns JSON data from the backend
 
-## License
+## Troubleshooting
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+- If the frontend cannot connect to the backend, check that the backend URL is correctly set in the React app's environment variables.
+- For Kubernetes deployments, ensure all services are running with `kubectl get pods` and `kubectl get services`.
+- For Minikube deployments:
+  - Ensure Minikube is running with `minikube status`
+  - If services aren't accessible, try `minikube tunnel` in a separate terminal
+  - Check if images are properly loaded with `minikube ssh 'docker images'` (not applicable for 'none' driver)
+  - Verify the correct NodePorts are being used with `kubectl get services`
+  - If running as root and getting errors with the Docker driver, use the 'none' driver instead
+  - For detailed status information, run the provided script: `./check-minikube-status.sh`
 
+### Common Minikube Issues
 
-Additional Documentation
-Dockerfile for React App
-Dockerfile for Go Backend
-Kubernetes Deployment for React App
-Kubernetes Deployment for Go Backend
-NGINX Configuration (if applicable)
+- **Root privileges error**: If you see `The "docker" driver should not be used with root privileges`, either:
+  - Run Minikube as a non-root user
+  - Use the 'none' driver with `sudo minikube start --driver=none`
+  - Force using Docker with root: `sudo minikube start --driver=docker --force` (not recommended)
 
-
-
-
-
-
-
+- **Driver-specific issues**: Different drivers have different characteristics and limitations. See the [Minikube Guide](./MINIKUBE.md) for driver-specific troubleshooting.

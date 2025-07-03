@@ -1,0 +1,25 @@
+[0;1;32m●[0m docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+   Active: [0;1;32mactive (running)[0m since Sun 2024-07-21 23:48:13 EDT; 3h 46min ago
+     Docs: https://docs.docker.com
+ Main PID: 546110 (dockerd)
+    Tasks: 52
+   Memory: 463.2M
+   CGroup: /system.slice/docker.service
+           ├─546110 /usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
+           ├─550311 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 32768 -container-ip 192.168.58.2 -container-port 32443
+           ├─550325 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 32769 -container-ip 192.168.58.2 -container-port 8443
+           ├─550337 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 32770 -container-ip 192.168.58.2 -container-port 5000
+           ├─550350 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 32771 -container-ip 192.168.58.2 -container-port 2376
+           └─550363 /usr/bin/docker-proxy -proto tcp -host-ip 127.0.0.1 -host-port 32772 -container-ip 192.168.58.2 -container-port 22
+
+Jul 21 23:48:13 Minikubetestserver dockerd[546110]: time="2024-07-21T23:48:13.660120006-04:00" level=info msg="Docker daemon" commit=8e96db1 containerd-snapshotter=false storage-driver=overlay2 version=26.1.3
+Jul 21 23:48:13 Minikubetestserver dockerd[546110]: time="2024-07-21T23:48:13.660197499-04:00" level=info msg="Daemon has completed initialization"
+Jul 21 23:48:13 Minikubetestserver dockerd[546110]: time="2024-07-21T23:48:13.697332873-04:00" level=info msg="API listen on /run/docker.sock"
+Jul 21 23:48:13 Minikubetestserver systemd[1]: Started Docker Application Container Engine.
+Jul 21 23:53:34 Minikubetestserver dockerd[546110]: time="2024-07-21T23:53:34.127968095-04:00" level=warning msg="reference for unknown type: " digest="sha256:7ff490df401cc0fbf19a4521544ae8f4a00cc163e92a95017a8d8bfdb1422737" remote="gcr.io/k8s-minikube/kicbase@sha256:7ff490df401cc0fbf19a4521544ae8f4a00cc163e92a95017a8d8bfdb1422737" spanID=e7788f5692569ae7 traceID=214bddc2eebd36afde9c4af9d4811c70
+Jul 21 23:53:36 Minikubetestserver dockerd[546110]: time="2024-07-21T23:53:36.299619102-04:00" level=info msg="Firewalld: interface br-49f00406e3ce already part of docker zone, returning"
+Jul 21 23:53:38 Minikubetestserver dockerd[546110]: time="2024-07-21T23:53:38.079851234-04:00" level=info msg="ignoring event" container=bef473982308edb80e57694f729eebdd97dedde1a1ab12b6c30912e2c1d90a28 module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+Jul 21 23:53:40 Minikubetestserver dockerd[546110]: time="2024-07-21T23:53:40.445753153-04:00" level=info msg="ignoring event" container=63e117ac3a72b402c398003fa9a6051851666af557a48e89633d226c14ec9914 module=libcontainerd namespace=moby topic=/tasks/delete type="*events.TaskDelete"
+Jul 22 00:37:34 Minikubetestserver dockerd[546110]: 2024/07/22 00:37:34 http2: server: error reading preface from client @: read unix /run/docker.sock->@: read: connection reset by peer
+Jul 22 03:06:19 Minikubetestserver dockerd[546110]: 2024/07/22 03:06:19 http2: server: error reading preface from client @: read unix /run/docker.sock->@: read: connection reset by peer
