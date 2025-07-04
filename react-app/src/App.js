@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, useParams, useNavigate } from 'react-router-dom';
@@ -1249,6 +1249,30 @@ function ProfileSettings({ user, setUser }) {
   );
 }
 
+function useAppVersionChecker() {
+  const [updateAvailable, setUpdateAvailable] = useState(false);
+  const currentVersion = useRef(null);
+
+  useEffect(() => {
+    fetch('/version.json')
+      .then(res => res.json())
+      .then(data => {
+        currentVersion.current = data.version;
+      });
+    const interval = setInterval(() => {
+      fetch('/version.json')
+        .then(res => res.json())
+        .then(data => {
+          if (currentVersion.current && data.version !== currentVersion.current) {
+            setUpdateAvailable(true);
+          }
+        });
+    }, 60000);
+    return () => clearInterval(interval);
+  }, []);
+  return updateAvailable;
+}
+
 function App() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -1265,6 +1289,31 @@ function App() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const [guestName, setGuestName] = useState('');
+  const updateAvailable = useAppVersionChecker();
+  // PWA install prompt
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPrompt(true);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+  // Hide prompt if already installed
+  useEffect(() => {
+    const handler = () => setShowInstallPrompt(false);
+    window.addEventListener('appinstalled', handler);
+    return () => window.removeEventListener('appinstalled', handler);
+  }, []);
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(() => setShowInstallPrompt(false));
+    }
+  };
 
   useEffect(() => {
     const backendUrl = 'http://127.0.0.1:8085/api';
@@ -1355,7 +1404,6 @@ function App() {
           const text = await response.text();
           throw new Error(text);
         }
-        // Try to parse JSON, fallback to error if not JSON
         try {
           return await response.json();
         } catch {
@@ -1364,6 +1412,10 @@ function App() {
       })
       .then(group => {
         setGroup(group);
+        // Fetch updated group list
+        fetch(`http://127.0.0.1:8085/my-groups?user_id=${user.id}`)
+          .then(res => res.json())
+          .then(groups => setUserGroups(groups));
         alert('Group created! Your group code is: ' + group.code);
       })
       .catch(error => {
@@ -1429,6 +1481,21 @@ function App() {
 
   return (
     <Router>
+      {updateAvailable && (
+        <div style={{
+          position: 'fixed', top: 0, width: '100%', background: '#ff0', color: '#000', zIndex: 9999, textAlign: 'center', padding: '10px'
+        }}>
+          New update available! <button onClick={() => window.location.reload(true)}>Reload</button>
+        </div>
+      )}
+      {showInstallPrompt && (
+        <div style={{
+          position: 'fixed', bottom: 0, width: '100%', background: '#2a6cff', color: '#fff', zIndex: 9999, textAlign: 'center', padding: '14px', fontSize: '1.1rem', boxShadow: '0 -2px 8px #2a6cff33'
+        }}>
+          Add LetsHangOut to your homescreen for the best experience!
+          <button style={{marginLeft: 16, background: '#fff', color: '#2a6cff', border: 'none', borderRadius: 6, padding: '8px 18px', fontWeight: 700, fontSize: '1rem', cursor: 'pointer'}} onClick={handleInstallClick}>Add to Homescreen</button>
+        </div>
+      )}
       <Routes>
         <Route path="/invite/:groupCode" element={
           <InviteJoin
