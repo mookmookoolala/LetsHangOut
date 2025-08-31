@@ -11,3 +11,120 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Mobile-friendly defaults */
+@media (max-width: 600px) {
+  input, select, textarea, button {
+    font-size: 16px; /* prevent iOS zoom */
+    min-height: 44px; /* recommended touch target */
+  }
+  
+  .MuiButton-root {
+    min-height: 44px;
+  }
+  
+  .MuiIconButton-root {
+    width: 44px;
+    height: 44px;
+  }
+  
+  /* Enhanced mobile spacing */
+  .mobile-padding {
+    padding: 16px !important;
+  }
+  
+  .mobile-margin {
+    margin: 16px !important;
+  }
+  
+  /* Mobile card improvements */
+  .MuiCard-root {
+    margin: 8px !important;
+    border-radius: 12px !important;
+  }
+  
+  /* Mobile form improvements */
+  .MuiTextField-root {
+    margin-bottom: 16px !important;
+  }
+  
+  /* Mobile button improvements */
+  .MuiButton-root {
+    margin: 8px 0 !important;
+    border-radius: 8px !important;
+  }
+  
+  /* Mobile navigation improvements */
+  .MuiDrawer-paper {
+    width: 280px !important;
+  }
+  
+  /* Mobile typography */
+  h1 { font-size: 1.75rem !important; }
+  h2 { font-size: 1.5rem !important; }
+  h3 { font-size: 1.25rem !important; }
+  p { font-size: 1rem !important; line-height: 1.5 !important; }
+  
+  /* Mobile touch improvements */
+  .touch-target {
+    min-height: 44px !important;
+    min-width: 44px !important;
+    padding: 12px !important;
+  }
+  
+  /* Mobile grid improvements */
+  .mobile-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  /* Mobile sidebar improvements */
+  .mobile-sidebar-toggle {
+    position: fixed !important;
+    top: 16px !important;
+    left: 16px !important;
+    z-index: 1200 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 601px) and (max-width: 960px) {
+  .MuiCard-root {
+    margin: 12px !important;
+  }
+  
+  .MuiButton-root {
+    margin: 6px 0 !important;
+  }
+  
+  .mobile-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+}
+
+/* Enhanced mobile animations */
+@media (max-width: 600px) {
+  .mobile-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .mobile-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+}
