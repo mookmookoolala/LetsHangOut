@@ -22,8 +22,10 @@ const GestureNavigation = ({ children, routes = {} }) => {
     [DIRECTION.DOWN]: null           // No default action
   };
   
-  // Merge provided routes with defaults
-  const navigationRoutes = { ...defaultRoutes, ...routes };
+  // Merge provided routes with defaults and memoize to prevent unnecessary re-renders
+  const navigationRoutes = React.useMemo(() => {
+    return { ...defaultRoutes, ...routes };
+  }, [routes]);
   
   useEffect(() => {
     const container = containerRef.current;

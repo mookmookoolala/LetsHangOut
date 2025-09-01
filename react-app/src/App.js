@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Login from './components/Login';
 import { Register } from './components/Register';
 import { CreateGroup } from './components/CreateGroup';
@@ -13,7 +13,6 @@ import { InviteJoin } from './components/InviteJoin';
 import { ProfileSettings } from './components/ProfileSettings';
 import { Dashboard } from './components/Dashboard';
 import { ApiTest } from './components/ApiTest';
-import GestureNavigation from './components/GestureNavigation';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
