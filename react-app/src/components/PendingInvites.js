@@ -13,7 +13,6 @@ import {
   Divider,
   Box
 } from '@mui/material';
-import { format } from 'date-fns';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
@@ -118,7 +117,14 @@ export function PendingInvites({ open, onClose, userId, onAcceptInvite }) {
                         </Typography>
                         <br />
                         <Typography variant="body2" component="span" color="text.secondary">
-                          {format(new Date(invite.created_at), 'MMM d, yyyy h:mm a')}
+                          {new Date(invite.created_at).toLocaleString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            hour: 'numeric',
+                            minute: 'numeric',
+                            hour12: true
+                          })}
                         </Typography>
                       </React.Fragment>
                     }
