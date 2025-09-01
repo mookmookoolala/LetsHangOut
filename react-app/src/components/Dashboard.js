@@ -4,6 +4,8 @@ import { DateVoting } from './DateVoting';
 import { TaskBoard } from './TaskBoard';
 import { BudgetPanel } from './BudgetPanel';
 import { Chat } from './Chat';
+import { InviteUser } from './InviteUser';
+import { PendingInvites } from './PendingInvites';
 import PullToRefresh from './PullToRefresh';
 import {
   Container, Paper, Grid, Typography, Button, Select, MenuItem, FormControl, Divider, useMediaQuery, TextField, InputLabel
@@ -16,6 +18,9 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
 export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [], onSelectGroup }) {
   const [members, setMembers] = useState([]);
+  const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [showPendingInvites, setShowPendingInvites] = useState(false);
+  const [inviteCount, setInviteCount] = useState(0);
   const theme = useTheme();
   // Define isMobile for responsive design
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -38,9 +43,46 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
     return Promise.resolve([]); // Return resolved promise if no group
   }, [group]);
 
+  // Fetch pending invites count
+  const fetchPendingInvites = useCallback(() => {
+    if (user && user.id) {
+      fetch(`${API_URL}/pending-invites?user_id=${user.id}`)
+        .then(res => res.json())
+        .then(data => {
+          setInviteCount(Array.isArray(data) ? data.length : 0);
+        })
+        .catch(() => {
+          setInviteCount(0);
+        });
+    }
+  }, [user]);
+
   useEffect(() => {
     fetchGroupMembers();
-  }, [fetchGroupMembers]);
+    fetchPendingInvites();
+    
+    // Add event listener for opening invite dialog
+    const handleOpenInviteDialog = () => setShowInviteDialog(true);
+    window.addEventListener('open-invite-dialog', handleOpenInviteDialog);
+    
+    return () => {
+      window.removeEventListener('open-invite-dialog', handleOpenInviteDialog);
+    };
+  }, [fetchGroupMembers, fetchPendingInvites]);
+
+  // Handle accepting an invite and refreshing the group list
+  const handleAcceptInvite = (groupId) => {
+    // Fetch the group details
+    fetch(`${API_URL}/my-groups?user_id=${user.id}`)
+      .then(res => res.json())
+      .then(groups => {
+        const acceptedGroup = groups.find(g => g.id === groupId);
+        if (acceptedGroup && onSelectGroup) {
+          onSelectGroup(acceptedGroup);
+        }
+        setShowPendingInvites(false);
+      });
+  };
 
   // Only construct inviteLink if group and group.code exist
   const inviteLink = group && group.code ? `${window.location.origin}/invite/${group.code}` : '';
@@ -85,7 +127,14 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
   };
 
   return (
-    <DashboardLayout members={members} onLogout={onLogout}>
+    <DashboardLayout 
+      members={members} 
+      onLogout={onLogout} 
+      onShowInvites={() => setShowPendingInvites(true)} 
+      inviteCount={inviteCount}
+    >
+      {showInviteDialog && <InviteUser group={group} userId={user?.id} onClose={() => setShowInviteDialog(false)} onInviteSent={fetchPendingInvites} />}
+      {showPendingInvites && <PendingInvites user={user} onClose={() => setShowPendingInvites(false)} onAccept={handleAcceptInvite} onUpdate={fetchPendingInvites} />}
       <PullToRefresh onRefresh={handleRefresh}>
       {!group || !group.id ? (
         <Container maxWidth="sm" sx={{ py: 6 }}>

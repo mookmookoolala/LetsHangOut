@@ -40,7 +40,7 @@ const navLinks = [
   { name: 'Profile', icon: <PersonIcon />, to: '/profile' },
 ];
 
-export default function DashboardLayout({ children, members, onLogout }) {
+export default function DashboardLayout({ children, members, onLogout, onShowInvites, inviteCount = 0 }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -187,6 +187,88 @@ export default function DashboardLayout({ children, members, onLogout }) {
       )}
       <Divider />
       <List>
+        {/* Group Management Section */}
+        <Box sx={{ px: 2, py: 2, textAlign: 'center' }}>
+          <Typography 
+            variant="subtitle2" 
+            sx={{ 
+              fontWeight: 800, 
+              color: '#1a237e',
+              mb: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              '&::before, &::after': {
+                content: '""',
+                height: '1px',
+                flex: 1,
+                background: 'rgba(26, 35, 126, 0.2)',
+              }
+            }}
+          >
+            GROUP MANAGEMENT
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <ListItemButton 
+              onClick={() => window.dispatchEvent(new CustomEvent('open-invite-dialog'))}
+              sx={{ 
+                borderRadius: 2,
+                py: 1.2,
+                bgcolor: 'rgba(44, 100, 255, 0.08)',
+                '&:hover': { bgcolor: 'rgba(44, 100, 255, 0.15)' },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Invite Users" 
+                primaryTypographyProps={{ fontWeight: 600 }}
+              />
+            </ListItemButton>
+            
+            <ListItemButton 
+              onClick={onShowInvites}
+              sx={{ 
+                borderRadius: 2,
+                py: 1.2,
+                bgcolor: inviteCount > 0 ? 'rgba(44, 100, 255, 0.15)' : 'rgba(44, 100, 255, 0.08)',
+                '&:hover': { bgcolor: 'rgba(44, 100, 255, 0.15)' },
+                position: 'relative'
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
+                <GroupsIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Pending Invites" 
+                primaryTypographyProps={{ fontWeight: 600 }}
+              />
+              {inviteCount > 0 && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    right: 16,
+                    bgcolor: 'error.main',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: 24,
+                    height: 24,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {inviteCount}
+                </Box>
+              )}
+            </ListItemButton>
+          </Box>
+        </Box>
+        <Divider sx={{ my: 1 }} />
         <ListItem disablePadding>
           <ListItemButton onClick={onLogout}>
             <ListItemIcon><LogoutIcon /></ListItemIcon>

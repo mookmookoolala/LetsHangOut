@@ -114,7 +114,7 @@ function GroupJoinHandler({
 }) {
   const navigate = useNavigate();
 
-  const handleCreateGroup = (groupName) => {
+  const handleCreateGroup = (groupName, inviteOnly = false) => {
     if (!user || !user.id) {
       alert('You must be logged in to create a group.');
       return;
@@ -126,7 +126,8 @@ function GroupJoinHandler({
         name: groupName,
         user_id: user.id,
         username: user.guest ? user.username : undefined,
-        guest: user.guest ? true : undefined
+        guest: user.guest ? true : undefined,
+        invite_only: inviteOnly
       })
     })
       .then(async response => {
@@ -587,6 +588,10 @@ function App() {
                     onSelectGroup={setSelectedGroup}
                     onLogout={() => { 
                       console.log('Logout clicked');
+                      // Clear user data from localStorage to prevent auto-login on refresh
+                      localStorage.removeItem('user');
+                      localStorage.removeItem('selectedGroup');
+                      // Reset state
                       setUser(null); 
                       setSelectedGroup(null); 
                       setUserGroups([]);
