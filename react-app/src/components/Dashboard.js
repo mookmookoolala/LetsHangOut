@@ -5,18 +5,19 @@ import { TaskBoard } from './TaskBoard';
 import { BudgetPanel } from './BudgetPanel';
 import { Chat } from './Chat';
 import {
-  Container, Paper, Grid, Typography, Button, Select, MenuItem, FormControl, Divider, useMediaQuery, TextField
+  Container, Paper, Grid, Typography, Button, Select, MenuItem, FormControl, Divider, useMediaQuery, TextField, InputLabel
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import GroupsIcon from '@mui/icons-material/Groups';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
 export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [], onSelectGroup }) {
   const [members, setMembers] = useState([]);
   const theme = useTheme();
-  useMediaQuery(theme.breakpoints.down('sm')); // Used by Material-UI for responsive design
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Used by Material-UI for responsive design
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (group && group.id) {
