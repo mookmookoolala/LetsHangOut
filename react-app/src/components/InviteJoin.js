@@ -125,9 +125,20 @@ export function InviteJoin({ onLogin, onRegister, onGuest, user, setUser, setUse
         {showRegister ? (
           <Register onRegister={handleRegister} onSwitchToLogin={() => setShowRegister(false)} />
         ) : (
-          <Login onLogin={handleLogin} onSwitchToRegister={() => setShowRegister(true)} />
+          <Login 
+            onLogin={handleLogin} 
+            onSwitchToRegister={() => setShowRegister(true)} 
+            onGuest={() => {
+              if (onGuest) {
+                onGuest();
+                // Store the group code in localStorage to join after guest login
+                localStorage.setItem('pendingInviteCode', groupCode);
+                navigate('/');
+              }
+            }} 
+          />
         )}
       </Box>
     </Box>
   );
-} 
+}

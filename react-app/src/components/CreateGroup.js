@@ -4,11 +4,14 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 export function CreateGroup({ onCreate }) {
   const [groupName, setGroupName] = useState('');
+  const [inviteOnly, setInviteOnly] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   
@@ -34,9 +37,20 @@ export function CreateGroup({ onCreate }) {
           value={groupName}
           onChange={e => setGroupName(e.target.value)}
           fullWidth
-          sx={{ mb: 3, borderRadius: 2, background: '#f7f9fc' }}
+          sx={{ mb: 2, borderRadius: 2, background: '#f7f9fc' }}
           InputProps={{ style: { borderRadius: 10, color: '#1a237e' } }}
           InputLabelProps={{ style: { color: '#1a237e', fontWeight: 600 } }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={inviteOnly}
+              onChange={e => setInviteOnly(e.target.checked)}
+              sx={{ color: '#1a237e', '&.Mui-checked': { color: '#2a6cff' } }}
+            />
+          }
+          label="Make this group invite-only"
+          sx={{ mb: 2, alignSelf: 'flex-start', color: '#1a237e' }}
         />
         <Button
           variant="contained"
@@ -60,11 +74,11 @@ export function CreateGroup({ onCreate }) {
               color: '#666',
             },
           }}
-          onClick={() => onCreate(groupName)}
+          onClick={() => onCreate(groupName, inviteOnly)}
         >
           Create Group
         </Button>
       </CardContent>
     </Card>
   );
-} 
+}

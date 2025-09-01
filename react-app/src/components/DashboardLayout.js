@@ -29,7 +29,7 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
-const drawerWidth = 220;
+const drawerWidth = 240;
 
 const navLinks = [
   { name: 'Dashboard', icon: <DashboardIcon />, to: '/' },
@@ -40,7 +40,7 @@ const navLinks = [
   { name: 'Profile', icon: <PersonIcon />, to: '/profile' },
 ];
 
-export default function DashboardLayout({ children, members, onLogout }) {
+export default function DashboardLayout({ children, members, onLogout, onShowInvites, inviteCount = 0 }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,40 +53,131 @@ export default function DashboardLayout({ children, members, onLogout }) {
 
   const drawer = (
     <div>
-      <Toolbar sx={{ justifyContent: 'center', mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'center', mb: 3 }}>
         <Box
           component="img"
           src="https://letshangout.s3.us-east-1.amazonaws.com/icons/LHO8-removebg-preview+(1).png"
           alt="Letshangout Logo"
-          sx={{ width: 56, height: 56, borderRadius: '50%', boxShadow: 2, cursor: 'pointer' }}
+          sx={{ 
+            width: 64, 
+            height: 64, 
+            borderRadius: '50%', 
+            boxShadow: '0 8px 24px rgba(44, 100, 255, 0.15)', 
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'scale(1.05)',
+              boxShadow: '0 12px 30px rgba(44, 100, 255, 0.2)',
+            } 
+          }}
           onClick={() => navigate('/')}
         />
       </Toolbar>
       <Divider />
-      <List>
-        {navLinks.map((link) => (
-          <ListItem key={link.name} disablePadding>
-            <ListItemButton component={Link} to={link.to}>
-              <ListItemIcon>{link.icon}</ListItemIcon>
-              <ListItemText primary={link.name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+      <List sx={{ px: 1 }}>
+        {navLinks.map((link) => {
+          const isActive = location.pathname === link.to || 
+            (link.to !== '/' && location.pathname.startsWith(link.to));
+          return (
+            <ListItem key={link.name} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton 
+                component={Link} 
+                to={link.to}
+                selected={isActive}
+                sx={{ 
+                  borderRadius: 2,
+                  py: 1.2,
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <ListItemIcon sx={{ 
+                  color: isActive ? 'primary.dark' : '#444',
+                  minWidth: 40 
+                }}>
+                  {link.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={link.name} 
+                  primaryTypographyProps={{ 
+                    fontWeight: isActive ? 800 : 600,
+                    fontSize: '1rem',
+                    color: isActive ? 'primary.dark' : '#333'
+                  }} 
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
       <Divider />
       {/* Group Members Section */}
       {Array.isArray(members) && members.length > 0 && (
-        <Box sx={{ px: 2, py: 1, textAlign: 'center' }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.secondary', mb: 1 }}>
-            Group Members
+        <Box sx={{ px: 2, py: 2, textAlign: 'center', mt: 2 }}>
+          <Typography 
+            variant="subtitle2" 
+            sx={{ 
+              fontWeight: 800, 
+              color: '#1a237e', // Darker blue for better contrast
+              mb: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              '&::before, &::after': {
+                content: '""',
+                height: '1px',
+                flex: 1,
+                background: 'rgba(26, 35, 126, 0.2)', // Darker divider line for better contrast
+              }
+            }}
+          >
+            GROUP MEMBERS
           </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center' }}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: 1.5, 
+            alignItems: 'center',
+            mt: 1,
+          }}>
             {members.map((m) => (
-              <Box key={m.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                <Avatar sx={{ width: 28, height: 28, fontSize: 15, bgcolor: '#1976d2', mr: 1 }} src={m.picture || undefined}>
+              <Box 
+                key={m.id} 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 1.5, 
+                  mb: 0.5,
+                  width: '100%',
+                  p: 1,
+                  borderRadius: 2,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(44, 100, 255, 0.04)',
+                  }
+                }}
+              >
+                <Avatar 
+                  sx={{ 
+                    width: 36, 
+                    height: 36, 
+                    fontSize: 16, 
+                    bgcolor: 'primary.main', 
+                    boxShadow: '0 2px 8px rgba(44, 100, 255, 0.2)' 
+                  }} 
+                  src={m.picture || undefined}
+                >
                   {m.username ? m.username[0].toUpperCase() : '?'}
                 </Avatar>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontWeight: 600,
+                    color: 'text.primary',
+                    flex: 1,
+                    textAlign: 'left',
+                  }}
+                >
                   {m.username}
                 </Typography>
               </Box>
@@ -96,6 +187,88 @@ export default function DashboardLayout({ children, members, onLogout }) {
       )}
       <Divider />
       <List>
+        {/* Group Management Section */}
+        <Box sx={{ px: 2, py: 2, textAlign: 'center' }}>
+          <Typography 
+            variant="subtitle2" 
+            sx={{ 
+              fontWeight: 800, 
+              color: '#1a237e',
+              mb: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              '&::before, &::after': {
+                content: '""',
+                height: '1px',
+                flex: 1,
+                background: 'rgba(26, 35, 126, 0.2)',
+              }
+            }}
+          >
+            GROUP MANAGEMENT
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <ListItemButton 
+              onClick={() => window.dispatchEvent(new CustomEvent('open-invite-dialog'))}
+              sx={{ 
+                borderRadius: 2,
+                py: 1.2,
+                bgcolor: 'rgba(44, 100, 255, 0.08)',
+                '&:hover': { bgcolor: 'rgba(44, 100, 255, 0.15)' },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Invite Users" 
+                primaryTypographyProps={{ fontWeight: 600 }}
+              />
+            </ListItemButton>
+            
+            <ListItemButton 
+              onClick={onShowInvites}
+              sx={{ 
+                borderRadius: 2,
+                py: 1.2,
+                bgcolor: inviteCount > 0 ? 'rgba(44, 100, 255, 0.15)' : 'rgba(44, 100, 255, 0.08)',
+                '&:hover': { bgcolor: 'rgba(44, 100, 255, 0.15)' },
+                position: 'relative'
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
+                <GroupsIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Pending Invites" 
+                primaryTypographyProps={{ fontWeight: 600 }}
+              />
+              {inviteCount > 0 && (
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    right: 16,
+                    bgcolor: 'error.main',
+                    color: 'white',
+                    borderRadius: '50%',
+                    width: 24,
+                    height: 24,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {inviteCount}
+                </Box>
+              )}
+            </ListItemButton>
+          </Box>
+        </Box>
+        <Divider sx={{ my: 1 }} />
         <ListItem disablePadding>
           <ListItemButton onClick={onLogout}>
             <ListItemIcon><LogoutIcon /></ListItemIcon>
@@ -153,10 +326,8 @@ export default function DashboardLayout({ children, members, onLogout }) {
               fontWeight: 800,
               letterSpacing: 1,
               fontSize: { xs: '1.25rem', sm: '1.5rem' },
-              background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 1px 8px #f5f7fa',
+              color: '#1a237e', // Solid dark blue color instead of gradient for better contrast
+              // Removed gradient and transparent text fill for better readability
             }}
           >
             Dashboard
@@ -197,7 +368,7 @@ export default function DashboardLayout({ children, members, onLogout }) {
         sx={{
           flexGrow: 1,
           p: { xs: 2, sm: 3 },
-          pb: { xs: isMobile ? 8 : 2, sm: 3 }, // Add bottom padding for mobile navigation
+          pb: { xs: isMobile ? 10 : 2, sm: 3 }, // Increased bottom padding for taller mobile navigation
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           bgcolor: 'grey.100',
           minHeight: '100vh',
@@ -226,15 +397,21 @@ export default function DashboardLayout({ children, members, onLogout }) {
           aria-label="add"
           sx={{
             position: 'fixed',
-            bottom: 80,
-            right: 16,
+            bottom: { xs: 94, sm: 24 }, // Adjusted for different screen sizes
+            right: { xs: '50%', sm: 24 }, // Centered on mobile, right side on larger screens
+            transform: { xs: 'translateX(50%)', sm: 'none' }, // Center alignment for mobile
             zIndex: 1000,
-            width: 56,
-            height: 56,
-            boxShadow: '0 4px 20px rgba(42, 108, 255, 0.3)',
+            width: 64, // Larger for better touch target
+            height: 64, // Larger for better touch target
+            boxShadow: '0 6px 20px rgba(42, 108, 255, 0.4)',
+            background: 'linear-gradient(135deg, #2a6cff 0%, #6c47ff 100%)',
             '&:hover': {
-              transform: 'scale(1.1)',
-              boxShadow: '0 6px 25px rgba(42, 108, 255, 0.4)',
+              transform: { xs: 'translateX(50%) scale(1.05) translateY(-2px)', sm: 'scale(1.05) translateY(-2px)' },
+              boxShadow: '0 8px 25px rgba(42, 108, 255, 0.5)',
+            },
+            '&:active': {
+              transform: { xs: 'translateX(50%) scale(0.98)', sm: 'scale(0.98)' },
+              boxShadow: '0 2px 10px rgba(42, 108, 255, 0.3)',
             },
             transition: 'all 0.2s ease',
           }}
@@ -253,7 +430,7 @@ export default function DashboardLayout({ children, members, onLogout }) {
             }
           }}
         >
-          <AddIcon />
+          <AddIcon sx={{ fontSize: 28 }} />
         </Fab>
       )}
       
@@ -269,7 +446,11 @@ export default function DashboardLayout({ children, members, onLogout }) {
             bgcolor: 'background.paper',
             borderTop: 1,
             borderColor: 'divider',
-            boxShadow: '0 -2px 10px rgba(0,0,0,0.1)',
+            boxShadow: '0 -4px 15px rgba(0,0,0,0.1)',
+            height: 70, // Increased height for better touch targets
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            overflow: 'hidden',
           }}
         >
           <BottomNavigation
@@ -279,12 +460,52 @@ export default function DashboardLayout({ children, members, onLogout }) {
             }}
             showLabels
             sx={{
+              height: '100%',
               '& .MuiBottomNavigationAction-root': {
                 minWidth: 'auto',
-                py: 1,
+                py: 1.5,
+                transition: 'all 0.2s ease',
                 '&.Mui-selected': {
                   color: 'primary.main',
+                  '& .MuiBottomNavigationAction-label': {
+                    fontSize: '0.85rem',
+                    color: 'primary.main',
+                    fontWeight: 700,
+                    transition: 'transform 0.2s ease',
+                    transform: 'translateY(-2px) scale(1.05)',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: 'primary.main',
+                    transform: 'translateY(-2px) scale(1.15)',
+                    filter: 'drop-shadow(0 2px 4px rgba(44,100,255,0.2))',
+                  },
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 8,
+                    left: '50%',
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    backgroundColor: 'primary.main',
+                    transform: 'translateX(-50%)',
+                  }
                 },
+                '& .MuiBottomNavigationAction-label': {
+                  fontSize: '0.8rem',
+                  marginTop: 0.5,
+                  fontWeight: 600,
+                  color: 'text.secondary',
+                  transition: 'all 0.2s ease',
+                },
+                '& .MuiSvgIcon-root': {
+                  fontSize: '1.4rem',
+                  color: 'text.secondary',
+                  transition: 'all 0.2s ease',
+                },
+                '&:active': {
+                  backgroundColor: 'rgba(44,100,255,0.08)',
+                }
               },
             }}
           >
@@ -292,30 +513,65 @@ export default function DashboardLayout({ children, members, onLogout }) {
               label="Dashboard"
               value="/"
               icon={<DashboardIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
             <BottomNavigationAction
               label="Calendar"
               value="/calendar"
               icon={<CalendarMonthIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
             <BottomNavigationAction
               label="Tasks"
               value="/tasks"
               icon={<TaskIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
             <BottomNavigationAction
               label="Budget"
               value="/budget"
               icon={<AccountBalanceWalletIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
             <BottomNavigationAction
               label="Profile"
               value="/profile"
               icon={<PersonIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
           </BottomNavigation>
         </Box>
       )}
     </Box>
   );
-} 
+}

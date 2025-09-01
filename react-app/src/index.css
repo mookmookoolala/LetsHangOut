@@ -16,16 +16,26 @@ code {
 @media (max-width: 600px) {
   input, select, textarea, button {
     font-size: 16px; /* prevent iOS zoom */
-    min-height: 44px; /* recommended touch target */
+    min-height: 48px; /* larger touch target */
+    border-radius: 8px; /* rounded corners for better visual */
   }
   
   .MuiButton-root {
-    min-height: 44px;
+    min-height: 48px;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+  }
+  
+  .MuiButton-root:active {
+    transform: scale(0.98) !important;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1) !important;
   }
   
   .MuiIconButton-root {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px !important;
   }
   
   /* Enhanced mobile spacing */
@@ -67,9 +77,31 @@ code {
   
   /* Mobile touch improvements */
   .touch-target {
-    min-height: 44px !important;
-    min-width: 44px !important;
+    min-height: 48px !important;
+    min-width: 48px !important;
     padding: 12px !important;
+    position: relative !important;
+    overflow: visible !important;
+  }
+  
+  /* Touch feedback effect */
+  .touch-target::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background-color: rgba(44, 100, 255, 0.08) !important;
+    border-radius: inherit !important;
+    transform: translate(-50%, -50%) scale(0) !important;
+    opacity: 0 !important;
+    transition: transform 0.3s ease, opacity 0.3s ease !important;
+  }
+  
+  .touch-target:active::after {
+    transform: translate(-50%, -50%) scale(1) !important;
+    opacity: 1 !important;
   }
   
   /* Mobile grid improvements */
@@ -118,6 +150,24 @@ code {
     animation: slideUp 0.3s ease-out;
   }
   
+  .mobile-scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+  
+  .mobile-bounce-in {
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  /* Touch feedback for all interactive elements */
+  button, a, .MuiButtonBase-root, [role="button"], input[type="submit"], input[type="button"] {
+    transition: transform 0.15s ease !important;
+    transform-origin: center !important;
+  }
+  
+  button:active, a:active, .MuiButtonBase-root:active, [role="button"]:active, input[type="submit"]:active, input[type="button"]:active {
+    transform: scale(0.97) !important;
+  }
+  
   @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -126,5 +176,16 @@ code {
   @keyframes slideUp {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+  }
+  
+  @keyframes scaleIn {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  
+  @keyframes bounceIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    70% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
   }
 }

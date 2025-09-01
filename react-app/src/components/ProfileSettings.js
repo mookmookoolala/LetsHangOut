@@ -32,17 +32,25 @@ export function ProfileSettings({ user, setUser, selectedGroup, setSelectedGroup
       pictureUrl = preview;
     }
     const updated = { ...user, username, phone, picture: pictureUrl };
-    await fetch(`${API_URL}/update-profile`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updated)
-    });
-    setUser(updated);
-    setSaving(false);
-    if (selectedGroup) {
-      navigate('/');
-    } else {
-      navigate('/');
+    try {
+      const response = await fetch(`${API_URL}/update-profile`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updated)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+      
+      setUser(updated);
+      // Navigate back after saving successfully
+      navigate(-1);
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      alert('Failed to save profile. Please try again.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -90,4 +98,4 @@ export function ProfileSettings({ user, setUser, selectedGroup, setSelectedGroup
       </div>
     </div>
   );
-} 
+}

@@ -4,10 +4,9 @@ import {
   Typography, 
   TextField, 
   Button, 
-  Paper, 
   Avatar,
-  useMediaQuery,
-  useTheme
+  // useMediaQuery, // Commented out as it's not currently used
+  // useTheme // Commented out as it's not currently used
 } from '@mui/material';
 import { Send as SendIcon } from '@mui/icons-material';
 
@@ -15,8 +14,9 @@ export function Chat({ user, group }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // const theme = useTheme(); // Commented out as it's not currently used
+  // Commented out as it's not currently used but will be needed for responsive design
+  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Fetch messages from backend (initial and polling)
   useEffect(() => {
@@ -155,4 +155,4 @@ export function Chat({ user, group }) {
       </Box>
     </Box>
   );
-} 
+}

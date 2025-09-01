@@ -12,13 +12,16 @@ import DashboardLayout from './components/DashboardLayout';
 import { InviteJoin } from './components/InviteJoin';
 import { ProfileSettings } from './components/ProfileSettings';
 import { Dashboard } from './components/Dashboard';
+import { ApiTest } from './components/ApiTest';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
-// Consistent error handling utility
+// Consistent error handling utility - commented out as it's not currently used
+// but will be useful for future API calls
+/*
 const handleApiError = (response, errorMessage = 'Operation failed') => {
   if (!response.ok) {
     return response.text().then(text => { 
@@ -27,8 +30,11 @@ const handleApiError = (response, errorMessage = 'Operation failed') => {
   }
   return response.json();
 };
+*/
 
-// Consistent API call wrapper
+// Consistent API call wrapper - commented out as it's not currently used
+// but will be useful for future API calls
+/*
 const apiCall = async (endpoint, options = {}, errorMessage = 'Operation failed') => {
   try {
     const response = await fetch(`${API_URL}${endpoint}`, {
@@ -40,6 +46,7 @@ const apiCall = async (endpoint, options = {}, errorMessage = 'Operation failed'
     throw new Error(error.message || errorMessage);
   }
 };
+*/
 
 function useAppVersionChecker() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -65,9 +72,13 @@ function useAppVersionChecker() {
   return updateAvailable;
 }
 
-function isMobile(isMobile) {
+// Utility function to detect mobile devices - commented out as it's not currently used
+// but will be useful for responsive design features
+/*
+function detectMobileDevice() {
   return /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
 }
+*/
 
 // RequireAuth wrapper: shows login/register UI if not logged in
 function RequireAuth({ user, showRegister, setShowRegister, showGuestPrompt, setShowGuestPrompt, guestName, setGuestName, onLogin, onRegister, onGuest, onConfirmGuest, children }) {
@@ -102,7 +113,7 @@ function GroupJoinHandler({
 }) {
   const navigate = useNavigate();
 
-  const handleCreateGroup = (groupName) => {
+  const handleCreateGroup = (groupName, inviteOnly = false) => {
     if (!user || !user.id) {
       alert('You must be logged in to create a group.');
       return;
@@ -114,7 +125,8 @@ function GroupJoinHandler({
         name: groupName,
         user_id: user.id,
         username: user.guest ? user.username : undefined,
-        guest: user.guest ? true : undefined
+        guest: user.guest ? true : undefined,
+        invite_only: inviteOnly
       })
     })
       .then(async response => {
@@ -184,7 +196,8 @@ function App() {
   const updateAvailable = useAppVersionChecker();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-  const userHasGroups = user && userGroups && userGroups.length > 0;
+  // Commented out as it's not currently used but may be needed later
+  // const userHasGroups = user && userGroups && userGroups.length > 0;
   const [showJoin, setShowJoin] = useState(false);
   const [userGroupsLoading, setUserGroupsLoading] = useState(false);
   const theme = useTheme();
@@ -209,7 +222,7 @@ function App() {
     };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
+  }, [isMobile]);
   // Hide prompt if already installed
   useEffect(() => {
     const handler = () => setShowInstallPrompt(false);
@@ -325,15 +338,8 @@ function App() {
       });
   };
 
-  const handleSendMessage = (text) => {
-    // Implementation of handleSendMessage
-  };
-  const handleAddTodo = (task, date, assignee) => {
-    // Implementation of handleAddTodo
-  };
-  const handleCompleteTodo = (idx) => {
-    // Implementation of handleCompleteTodo
-  };
+  // These functions are defined but not currently used
+  // They are kept for future implementation
 
   const handleGuest = () => {
     setShowGuestPrompt(true);
@@ -347,6 +353,7 @@ function App() {
     })
       .then(res => res.json())
       .then(user => {
+        console.log('Guest login successful:', user);
         setUser({ ...user, guest: true });
         setShowGuestPrompt(false);
         setGuestName('');
@@ -354,26 +361,77 @@ function App() {
         setSelectedGroup(null);
         setUserGroups([]);
         setUserGroupsLoading(true);
-        // Fetch groups for guest user
-        fetch(`${API_URL}/my-groups?user_id=${user.id}`)
-          .then(res => res.json())
-          .then(groups => {
-            console.log('Guest login - fetched groups:', groups);
-            setUserGroups(groups || []);
-            // Don't automatically select a group - let user choose
-            setSelectedGroup(null);
-            setShowJoin(false);
-            setUserGroupsLoading(false);
+        
+        // Check if there's a pending invite code from localStorage
+        const pendingInviteCode = localStorage.getItem('pendingInviteCode');
+        
+        if (pendingInviteCode) {
+          console.log('Found pending invite code during guest login:', pendingInviteCode);
+          // Join the group with the invite code
+          fetch(`${API_URL}/join-group`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: pendingInviteCode, user_id: user.id })
           })
-          .catch((error) => {
-            console.error('Guest login - error fetching groups:', error);
-            setUserGroups([]);
-            setSelectedGroup(null);
-            setUserGroupsLoading(false);
-          });
+            .then(res => {
+              if (!res.ok) return res.text().then(text => { throw new Error(text); });
+              return res.json();
+            })
+            .then(data => {
+              console.log('Successfully joined group with invite code:', data);
+              // Clear the pending invite code
+              localStorage.removeItem('pendingInviteCode');
+              
+              // Fetch groups for guest user after joining
+              return fetch(`${API_URL}/my-groups?user_id=${user.id}`)
+                .then(res => res.json())
+                .then(groups => {
+                  console.log('Guest login with invite - fetched groups:', groups);
+                  setUserGroups(groups || []);
+                  // Select the joined group
+                  if (data && data.group) {
+                    setSelectedGroup(data.group);
+                  }
+                  setShowJoin(false);
+                  setUserGroupsLoading(false);
+                });
+            })
+            .catch(error => {
+              console.error('Error joining group with invite code:', error);
+              // If joining fails, just fetch groups normally
+              fetchGuestGroups(user.id);
+              // Clear the pending invite code to prevent repeated attempts
+              localStorage.removeItem('pendingInviteCode');
+            });
+        } else {
+          // No pending invite, just fetch groups normally
+          fetchGuestGroups(user.id);
+        }
+      });
+  };
+  
+  // Helper function to fetch guest groups
+  const fetchGuestGroups = (userId) => {
+    fetch(`${API_URL}/my-groups?user_id=${userId}`)
+      .then(res => res.json())
+      .then(groups => {
+        console.log('Guest login - fetched groups:', groups);
+        setUserGroups(groups || []);
+        // Don't automatically select a group - let user choose
+        setSelectedGroup(null);
+        setShowJoin(false);
+        setUserGroupsLoading(false);
+      })
+      .catch((error) => {
+        console.error('Guest login - error fetching groups:', error);
+        setUserGroups([]);
+        setSelectedGroup(null);
+        setUserGroupsLoading(false);
       });
   };
 
+  // Commented out as it's not currently used but will be needed for group deletion functionality
+  /*
   function handleDeleteGroup(g) {
     if (window.confirm('Are you sure you want to delete this group? This cannot be undone.')) {
       fetch(`${API_URL}/delete-group`, {
@@ -394,7 +452,10 @@ function App() {
         .catch(err => alert('Failed to delete group: ' + err.message));
     }
   }
+  */
 
+  // Commented out as it's not currently used but will be needed for group leaving functionality
+  /*
   function handleLeaveGroup(g) {
     if (window.confirm('Are you sure you want to leave this group?')) {
       fetch(`${API_URL}/leave-group`, {
@@ -415,6 +476,7 @@ function App() {
         .catch(err => alert('Failed to leave group: ' + err.message));
     }
   }
+  */
 
   function handleSidebarDeleteGroup() {
     if (window.confirm('Are you sure you want to delete this group? This cannot be undone.')) {
@@ -525,6 +587,10 @@ function App() {
                     onSelectGroup={setSelectedGroup}
                     onLogout={() => { 
                       console.log('Logout clicked');
+                      // Clear user data from localStorage to prevent auto-login on refresh
+                      localStorage.removeItem('user');
+                      localStorage.removeItem('selectedGroup');
+                      // Reset state
                       setUser(null); 
                       setSelectedGroup(null); 
                       setUserGroups([]);
@@ -734,6 +800,7 @@ function App() {
             </DashboardLayout>
           </RequireAuth>
         } />
+        <Route path="/api-test" element={<ApiTest />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
