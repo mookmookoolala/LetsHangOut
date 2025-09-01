@@ -133,6 +133,7 @@ export function InviteJoin({ onLogin, onRegister, onGuest, user, setUser, setUse
                 onGuest();
                 // Store the group code in localStorage to join after guest login
                 localStorage.setItem('pendingInviteCode', groupCode);
+                navigate('/');
               }
             }} 
           />

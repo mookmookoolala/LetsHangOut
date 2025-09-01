@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Login from './components/Login';
 import { Register } from './components/Register';
 import { CreateGroup } from './components/CreateGroup';
@@ -13,13 +13,16 @@ import { InviteJoin } from './components/InviteJoin';
 import { ProfileSettings } from './components/ProfileSettings';
 import { Dashboard } from './components/Dashboard';
 import { ApiTest } from './components/ApiTest';
+import GestureNavigation from './components/GestureNavigation';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
-// Consistent error handling utility
+// Consistent error handling utility - commented out as it's not currently used
+// but will be useful for future API calls
+/*
 const handleApiError = (response, errorMessage = 'Operation failed') => {
   if (!response.ok) {
     return response.text().then(text => { 
@@ -28,6 +31,7 @@ const handleApiError = (response, errorMessage = 'Operation failed') => {
   }
   return response.json();
 };
+*/
 
 // Consistent API call wrapper - commented out as it's not currently used
 // but will be useful for future API calls
@@ -69,10 +73,13 @@ function useAppVersionChecker() {
   return updateAvailable;
 }
 
-// Utility function to detect mobile devices
+// Utility function to detect mobile devices - commented out as it's not currently used
+// but will be useful for responsive design features
+/*
 function detectMobileDevice() {
   return /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
 }
+*/
 
 // RequireAuth wrapper: shows login/register UI if not logged in
 function RequireAuth({ user, showRegister, setShowRegister, showGuestPrompt, setShowGuestPrompt, guestName, setGuestName, onLogin, onRegister, onGuest, onConfirmGuest, children }) {
@@ -346,6 +353,7 @@ function App() {
     })
       .then(res => res.json())
       .then(user => {
+        console.log('Guest login successful:', user);
         setUser({ ...user, guest: true });
         setShowGuestPrompt(false);
         setGuestName('');
@@ -358,6 +366,7 @@ function App() {
         const pendingInviteCode = localStorage.getItem('pendingInviteCode');
         
         if (pendingInviteCode) {
+          console.log('Found pending invite code during guest login:', pendingInviteCode);
           // Join the group with the invite code
           fetch(`${API_URL}/join-group`, {
             method: 'POST',
@@ -369,6 +378,7 @@ function App() {
               return res.json();
             })
             .then(data => {
+              console.log('Successfully joined group with invite code:', data);
               // Clear the pending invite code
               localStorage.removeItem('pendingInviteCode');
               
@@ -379,7 +389,9 @@ function App() {
                   console.log('Guest login with invite - fetched groups:', groups);
                   setUserGroups(groups || []);
                   // Select the joined group
-                  setSelectedGroup(data.group);
+                  if (data && data.group) {
+                    setSelectedGroup(data.group);
+                  }
                   setShowJoin(false);
                   setUserGroupsLoading(false);
                 });
@@ -388,6 +400,8 @@ function App() {
               console.error('Error joining group with invite code:', error);
               // If joining fails, just fetch groups normally
               fetchGuestGroups(user.id);
+              // Clear the pending invite code to prevent repeated attempts
+              localStorage.removeItem('pendingInviteCode');
             });
         } else {
           // No pending invite, just fetch groups normally

@@ -91,7 +91,7 @@ export default function DashboardLayout({ children, members, onLogout }) {
                 }}
               >
                 <ListItemIcon sx={{ 
-                  color: isActive ? 'primary.main' : 'text.secondary',
+                  color: isActive ? 'primary.dark' : '#444',
                   minWidth: 40 
                 }}>
                   {link.icon}
@@ -99,8 +99,9 @@ export default function DashboardLayout({ children, members, onLogout }) {
                 <ListItemText 
                   primary={link.name} 
                   primaryTypographyProps={{ 
-                    fontWeight: isActive ? 700 : 500,
-                    fontSize: '0.95rem'
+                    fontWeight: isActive ? 800 : 600,
+                    fontSize: '1rem',
+                    color: isActive ? 'primary.dark' : '#333'
                   }} 
                 />
               </ListItemButton>
@@ -115,8 +116,8 @@ export default function DashboardLayout({ children, members, onLogout }) {
           <Typography 
             variant="subtitle2" 
             sx={{ 
-              fontWeight: 700, 
-              color: 'primary.main', 
+              fontWeight: 800, 
+              color: '#1a237e', // Darker blue for better contrast
               mb: 2,
               display: 'flex',
               alignItems: 'center',
@@ -126,7 +127,7 @@ export default function DashboardLayout({ children, members, onLogout }) {
                 content: '""',
                 height: '1px',
                 flex: 1,
-                background: 'rgba(44, 100, 255, 0.1)',
+                background: 'rgba(26, 35, 126, 0.2)', // Darker divider line for better contrast
               }
             }}
           >
@@ -243,10 +244,8 @@ export default function DashboardLayout({ children, members, onLogout }) {
               fontWeight: 800,
               letterSpacing: 1,
               fontSize: { xs: '1.25rem', sm: '1.5rem' },
-              background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              textShadow: '0 1px 8px #f5f7fa',
+              color: '#1a237e', // Solid dark blue color instead of gradient for better contrast
+              // Removed gradient and transparent text fill for better readability
             }}
           >
             Dashboard
@@ -287,7 +286,7 @@ export default function DashboardLayout({ children, members, onLogout }) {
         sx={{
           flexGrow: 1,
           p: { xs: 2, sm: 3 },
-          pb: { xs: isMobile ? 8 : 2, sm: 3 }, // Add bottom padding for mobile navigation
+          pb: { xs: isMobile ? 10 : 2, sm: 3 }, // Increased bottom padding for taller mobile navigation
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           bgcolor: 'grey.100',
           minHeight: '100vh',
@@ -316,15 +315,21 @@ export default function DashboardLayout({ children, members, onLogout }) {
           aria-label="add"
           sx={{
             position: 'fixed',
-            bottom: 80,
-            right: 16,
+            bottom: { xs: 94, sm: 24 }, // Adjusted for different screen sizes
+            right: { xs: '50%', sm: 24 }, // Centered on mobile, right side on larger screens
+            transform: { xs: 'translateX(50%)', sm: 'none' }, // Center alignment for mobile
             zIndex: 1000,
-            width: 56,
-            height: 56,
-            boxShadow: '0 4px 20px rgba(42, 108, 255, 0.3)',
+            width: 64, // Larger for better touch target
+            height: 64, // Larger for better touch target
+            boxShadow: '0 6px 20px rgba(42, 108, 255, 0.4)',
+            background: 'linear-gradient(135deg, #2a6cff 0%, #6c47ff 100%)',
             '&:hover': {
-              transform: 'scale(1.1)',
-              boxShadow: '0 6px 25px rgba(42, 108, 255, 0.4)',
+              transform: { xs: 'translateX(50%) scale(1.05) translateY(-2px)', sm: 'scale(1.05) translateY(-2px)' },
+              boxShadow: '0 8px 25px rgba(42, 108, 255, 0.5)',
+            },
+            '&:active': {
+              transform: { xs: 'translateX(50%) scale(0.98)', sm: 'scale(0.98)' },
+              boxShadow: '0 2px 10px rgba(42, 108, 255, 0.3)',
             },
             transition: 'all 0.2s ease',
           }}
@@ -343,7 +348,7 @@ export default function DashboardLayout({ children, members, onLogout }) {
             }
           }}
         >
-          <AddIcon />
+          <AddIcon sx={{ fontSize: 28 }} />
         </Fab>
       )}
       
@@ -359,7 +364,11 @@ export default function DashboardLayout({ children, members, onLogout }) {
             bgcolor: 'background.paper',
             borderTop: 1,
             borderColor: 'divider',
-            boxShadow: '0 -2px 10px rgba(0,0,0,0.1)',
+            boxShadow: '0 -4px 15px rgba(0,0,0,0.1)',
+            height: 70, // Increased height for better touch targets
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            overflow: 'hidden',
           }}
         >
           <BottomNavigation
@@ -369,12 +378,52 @@ export default function DashboardLayout({ children, members, onLogout }) {
             }}
             showLabels
             sx={{
+              height: '100%',
               '& .MuiBottomNavigationAction-root': {
                 minWidth: 'auto',
-                py: 1,
+                py: 1.5,
+                transition: 'all 0.2s ease',
                 '&.Mui-selected': {
                   color: 'primary.main',
+                  '& .MuiBottomNavigationAction-label': {
+                    fontSize: '0.85rem',
+                    color: 'primary.main',
+                    fontWeight: 700,
+                    transition: 'transform 0.2s ease',
+                    transform: 'translateY(-2px) scale(1.05)',
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: 'primary.main',
+                    transform: 'translateY(-2px) scale(1.15)',
+                    filter: 'drop-shadow(0 2px 4px rgba(44,100,255,0.2))',
+                  },
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: 8,
+                    left: '50%',
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    backgroundColor: 'primary.main',
+                    transform: 'translateX(-50%)',
+                  }
                 },
+                '& .MuiBottomNavigationAction-label': {
+                  fontSize: '0.8rem',
+                  marginTop: 0.5,
+                  fontWeight: 600,
+                  color: 'text.secondary',
+                  transition: 'all 0.2s ease',
+                },
+                '& .MuiSvgIcon-root': {
+                  fontSize: '1.4rem',
+                  color: 'text.secondary',
+                  transition: 'all 0.2s ease',
+                },
+                '&:active': {
+                  backgroundColor: 'rgba(44,100,255,0.08)',
+                }
               },
             }}
           >
@@ -382,26 +431,61 @@ export default function DashboardLayout({ children, members, onLogout }) {
               label="Dashboard"
               value="/"
               icon={<DashboardIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
             <BottomNavigationAction
               label="Calendar"
               value="/calendar"
               icon={<CalendarMonthIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
             <BottomNavigationAction
               label="Tasks"
               value="/tasks"
               icon={<TaskIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
             <BottomNavigationAction
               label="Budget"
               value="/budget"
               icon={<AccountBalanceWalletIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
             <BottomNavigationAction
               label="Profile"
               value="/profile"
               icon={<PersonIcon />}
+              sx={{ 
+                minWidth: 0,
+                maxWidth: 85,
+                padding: '8px 0',
+                borderRadius: 2,
+              }}
+              className="touch-target"
             />
           </BottomNavigation>
         </Box>

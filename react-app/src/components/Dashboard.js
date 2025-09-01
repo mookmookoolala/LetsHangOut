@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DashboardLayout from './DashboardLayout';
 import { DateVoting } from './DateVoting';
 import { TaskBoard } from './TaskBoard';
 import { BudgetPanel } from './BudgetPanel';
 import { Chat } from './Chat';
+import PullToRefresh from './PullToRefresh';
 import {
   Container, Paper, Grid, Typography, Button, Select, MenuItem, FormControl, Divider, useMediaQuery, TextField, InputLabel
 } from '@mui/material';
@@ -21,14 +22,25 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
   // Initialize navigate for routing
   const navigate = useNavigate();
 
-  useEffect(() => {
+  const fetchGroupMembers = useCallback(() => {
     if (group && group.id) {
-      fetch(`${API_URL}/group-members?group_id=${group.id}`)
+      return fetch(`${API_URL}/group-members?group_id=${group.id}`)
         .then(res => res.json())
-        .then(data => setMembers(Array.isArray(data) ? data : []))
-        .catch(() => setMembers([]));
+        .then(data => {
+          setMembers(Array.isArray(data) ? data : []);
+          return data; // Return data for promise chaining
+        })
+        .catch(() => {
+          setMembers([]);
+          return []; // Return empty array on error
+        });
     }
+    return Promise.resolve([]); // Return resolved promise if no group
   }, [group]);
+
+  useEffect(() => {
+    fetchGroupMembers();
+  }, [fetchGroupMembers]);
 
   // Only construct inviteLink if group and group.code exist
   const inviteLink = group && group.code ? `${window.location.origin}/invite/${group.code}` : '';
@@ -58,8 +70,23 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
   // Variables below are defined but not currently used
   // They are kept for future implementation
 
+  // Handle refresh action
+  const handleRefresh = () => {
+    // Return the promise so PullToRefresh can track when it completes
+    return fetchGroupMembers()
+      .then(() => {
+        // You could add more refresh actions here if needed
+        return true;
+      })
+      .catch(error => {
+        console.error('Error refreshing data:', error);
+        return false;
+      });
+  };
+
   return (
     <DashboardLayout members={members} onLogout={onLogout}>
+      <PullToRefresh onRefresh={handleRefresh}>
       {!group || !group.id ? (
         <Container maxWidth="sm" sx={{ py: 6 }}>
           <Paper 
@@ -535,6 +562,7 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
           </Grid>
         </Container>
       )}
+      </PullToRefresh>
     </DashboardLayout>
   );
 }

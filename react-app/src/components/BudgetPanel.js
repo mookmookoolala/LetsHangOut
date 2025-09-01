@@ -106,9 +106,9 @@ export function BudgetPanel({ group, user }) {
   return (
     <Container maxWidth="sm" sx={{ py: isMobile ? 1 : 4 }}>
       <Paper elevation={2} sx={{ p: isMobile ? 2 : 4, borderRadius: 3, background: theme.palette.background.paper }}>
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', textAlign: 'center' }}>Budget Panel</Typography>
+        <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', textAlign: 'center', fontSize: isMobile ? 28 : 24 }}>Budget Panel</Typography>
         <Divider sx={{ mb: 3 }} />
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main' }}>Add Expense</Typography>
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Add Expense</Typography>
         <Grid container spacing={2} alignItems="center" direction="column">
           <Grid item xs={12} style={{ width: '100%' }}>
             <TextField
@@ -258,25 +258,25 @@ export function BudgetPanel({ group, user }) {
           </DialogActions>
         </Dialog>
         <Divider sx={{ my: 3 }} />
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main' }}>Expenses</Typography>
-        <TableContainer component={Paper} sx={{ mb: 3, boxShadow: 1, borderRadius: 2, background: theme.palette.background.paper }}>
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Expenses</Typography>
+        <TableContainer component={Paper} sx={{ mb: 3, boxShadow: 1, borderRadius: 2, background: theme.palette.background.paper, overflowX: isMobile ? 'auto' : 'hidden' }}>
           <Table size={isMobile ? 'medium' : 'small'}>
             <TableHead>
-              <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
-                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Description</TableCell>
-                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Amount</TableCell>
-                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Paid By</TableCell>
-                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Split With</TableCell>
-                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Date</TableCell>
-                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Action</TableCell>
-              </TableRow>
-            </TableHead>
+                <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Description</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Amount</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Paid By</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Split With</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Date</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Action</TableCell>
+                </TableRow>
+              </TableHead>
             <TableBody>
               {expenses.map(exp => (
                 <TableRow key={exp.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'grey.50' } }}>
-                  <TableCell sx={{ fontSize: 16 }}>{exp.description}</TableCell>
-                  <TableCell sx={{ fontSize: 16, fontWeight: 600 }}>${exp.amount}</TableCell>
-                  <TableCell sx={{ fontSize: 16 }}>
+                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 120 : undefined }}>{exp.description}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, fontWeight: 600, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 100 : undefined }}>${exp.amount}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 120 : undefined }}>
                     {(() => {
                       const m = members.find(m => m.id === exp.paid_by);
                       return m ? (
@@ -287,12 +287,12 @@ export function BudgetPanel({ group, user }) {
                       ) : exp.paid_by;
                     })()}
                   </TableCell>
-                  <TableCell sx={{ fontSize: 16 }}>{exp.split_with ? exp.split_with.map(id => {
+                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 150 : undefined }}>{exp.split_with ? exp.split_with.map(id => {
                     const m = members.find(m => m.id === id);
                     return m ? m.username : id;
                   }).join(', ') : ''}</TableCell>
-                  <TableCell sx={{ fontSize: 16 }}>{exp.date}</TableCell>
-                  <TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 100 : undefined }}>{exp.date}</TableCell>
+                  <TableCell sx={{ padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 80 : undefined }}>
                     <IconButton size="small" color="error" onClick={() => handleDeleteExpense(exp.id)}>
                       <DeleteIcon />
                     </IconButton>
@@ -303,14 +303,14 @@ export function BudgetPanel({ group, user }) {
           </Table>
         </TableContainer>
         <Divider sx={{ my: 3 }} />
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main' }}>Balances</Typography>
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Balances</Typography>
         <Grid container spacing={2} direction={isMobile ? 'column' : 'row'}>
           {balances.map((bal, idx) => (
             <Grid item xs={12} sm={6} md={4} key={idx}>
               <Card sx={{ minWidth: 120, boxShadow: 1, borderRadius: 2, background: theme.palette.background.paper }}>
                 <CardContent sx={{ textAlign: 'center' }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>{bal.username}</Typography>
-                  <Typography variant="body1" sx={{ color: bal.balance < 0 ? theme.palette.error.main : theme.palette.success.main, fontWeight: 700 }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16 }}>{bal.username}</Typography>
+                  <Typography variant="body1" sx={{ color: bal.balance < 0 ? theme.palette.error.main : theme.palette.success.main, fontWeight: 700, fontSize: isMobile ? 20 : 18 }}>
                     {bal.balance < 0 ? '-' : ''}${Math.abs(bal.balance).toFixed(2)}
                   </Typography>
                 </CardContent>
@@ -321,4 +321,4 @@ export function BudgetPanel({ group, user }) {
       </Paper>
     </Container>
   );
-} 
+}

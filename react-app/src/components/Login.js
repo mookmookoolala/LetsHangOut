@@ -102,7 +102,7 @@ function Login({ onLogin, onSwitchToRegister, onGuest }) {
               WebkitTextFillColor: 'transparent',
               letterSpacing: 1, 
               textAlign: 'center', 
-              textShadow: '0 2px 10px rgba(44, 100, 255, 0.15)'
+              // Removed text shadow that was causing blur
             }}
           >
             Welcome Back
@@ -242,7 +242,12 @@ function Login({ onLogin, onSwitchToRegister, onGuest }) {
                 background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
               },
             }}
-            onClick={onGuest}
+            onClick={() => {
+              console.log('Continue as Guest clicked');
+              if (onGuest) {
+                onGuest();
+              }
+            }}
           >
             Continue as Guest
           </Button>
