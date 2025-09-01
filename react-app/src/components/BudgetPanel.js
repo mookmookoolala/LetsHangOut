@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, TextField, Select, MenuItem, FormControl, InputLabel, Card, CardContent, Grid, Chip, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, OutlinedInput } from '@mui/material';
+import {
+  Box, Typography, Button, TextField, Select, MenuItem, FormControl, InputLabel, Card, CardContent, Grid, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, OutlinedInput, Divider, Container, Avatar
+} from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon, PersonAdd as PersonAddIcon, Search as SearchIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
@@ -102,183 +104,221 @@ export function BudgetPanel({ group, user }) {
   };
 
   return (
-    <Box>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: '#1976d2' }}>Add Expense</Typography>
-      <Grid container spacing={isMobile ? 2 : 3} alignItems="center" direction={isMobile ? 'column' : 'row'}>
-        <Grid item xs={12} sm={3} style={{ width: isMobile ? '100%' : undefined }}>
-          <TextField
-            label="Description"
-            value={desc}
-            onChange={e => setDesc(e.target.value)}
-            fullWidth
-            size={isMobile ? 'medium' : 'small'}
-            InputProps={{ style: { fontSize: isMobile ? 18 : 15, padding: isMobile ? 14 : undefined } }}
-            sx={{ mb: isMobile ? 1 : 0 }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={2} style={{ width: isMobile ? '100%' : undefined }}>
-          <TextField
-            label="Amount"
-            type="number"
-            value={amount}
-            onChange={e => setAmount(e.target.value)}
-            fullWidth
-            size={isMobile ? 'medium' : 'small'}
-            InputProps={{ style: { fontSize: isMobile ? 18 : 15, padding: isMobile ? 14 : undefined } }}
-            sx={{ mb: isMobile ? 1 : 0 }}
-          />
-        </Grid>
-        <Grid item xs={12} sm={3} style={{ width: isMobile ? '100%' : undefined }}>
-          <FormControl fullWidth size={isMobile ? 'medium' : 'small'} sx={{ mb: isMobile ? 1 : 0 }}>
-            <InputLabel>Paid By</InputLabel>
-            <Select
-              value={paidBy}
-              label="Paid By"
-              onChange={e => setPaidBy(e.target.value)}
-              style={{ fontSize: isMobile ? 18 : 15 }}
-            >
-              {members.map(m => (
-                <MenuItem key={m.id} value={m.id}>{m.username}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={3} style={{ width: isMobile ? '100%' : undefined }}>
-          <FormControl fullWidth size={isMobile ? 'medium' : 'small'} sx={{ mb: isMobile ? 1 : 0 }}>
-            <InputLabel>Split With</InputLabel>
-            <Select
-              multiple
-              value={splitWith}
-              label="Split With"
-              onChange={e => setSplitWith(e.target.value)}
-              renderValue={selected => selected.map(id => {
-                const m = members.find(mem => mem.id === id);
-                return m ? m.username : id;
-              }).join(', ')}
-              style={{ fontSize: isMobile ? 18 : 15 }}
-            >
-              <MenuItem 
-                value="all" 
-                onClick={() => {
-                  const allMemberIds = members.map(m => m.id);
-                  setSplitWith(splitWith.length === allMemberIds.length ? [] : allMemberIds);
-                }}
-                sx={{ 
-                  fontWeight: 600, 
-                  backgroundColor: 'primary.light', 
-                  color: 'white',
-                  '&:hover': { backgroundColor: 'primary.main' }
+    <Container maxWidth="sm" sx={{ py: isMobile ? 1 : 4 }}>
+      <Paper elevation={2} sx={{ p: isMobile ? 2 : 4, borderRadius: 3, background: theme.palette.background.paper }}>
+        <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', textAlign: 'center' }}>Budget Panel</Typography>
+        <Divider sx={{ mb: 3 }} />
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main' }}>Add Expense</Typography>
+        <Grid container spacing={2} alignItems="center" direction="column">
+          <Grid item xs={12} style={{ width: '100%' }}>
+            <TextField
+              label="Description"
+              value={desc}
+              onChange={e => setDesc(e.target.value)}
+              fullWidth
+              size="medium"
+              InputProps={{ style: { fontSize: 18, padding: 14 } }}
+              sx={{ mb: 1 }}
+            />
+          </Grid>
+          <Grid item xs={12} style={{ width: '100%' }}>
+            <TextField
+              label="Amount"
+              type="number"
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+              fullWidth
+              size="medium"
+              InputProps={{ style: { fontSize: 18, padding: 14 } }}
+              sx={{ mb: 1 }}
+            />
+          </Grid>
+          <Grid item xs={12} style={{ width: '100%' }}>
+            <FormControl fullWidth size="medium" sx={{ mb: 1 }}>
+              <InputLabel>Paid By</InputLabel>
+              <Select
+                value={paidBy}
+                label="Paid By"
+                onChange={e => setPaidBy(e.target.value)}
+                style={{ fontSize: 18 }}
+                renderValue={selected => {
+                  const m = members.find(mem => mem.id === selected);
+                  return m ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <Avatar sx={{ width: 24, height: 24, mr: 1 }}>{m.username[0]}</Avatar>
+                      {m.username}
+                    </Box>
+                  ) : selected;
                 }}
               >
-                {splitWith.length === members.length ? 'Deselect All' : 'Select All'}
-              </MenuItem>
-              <MenuItem sx={{ borderTop: '1px solid #ddd' }} disabled>
-                ──────────────────
-              </MenuItem>
-              <MenuItem sx={{ p: 0 }}>
-                <OutlinedInput
-                  placeholder="Search members..."
-                  value={splitSearch}
-                  onChange={(e) => setSplitSearch(e.target.value)}
-                  size="small"
-                  startAdornment={<SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />}
-                  sx={{ 
-                    width: '100%', 
-                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                    '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 'none' }
-                  }}
-                />
-              </MenuItem>
-              {members
-                .filter(m => m.username.toLowerCase().includes(splitSearch.toLowerCase()))
-                .map(m => (
-                  <MenuItem key={m.id} value={m.id}>{m.username}</MenuItem>
+                {members.map(m => (
+                  <MenuItem key={m.id} value={m.id}>
+                    <Avatar sx={{ width: 24, height: 24, mr: 1 }}>{m.username[0]}</Avatar>
+                    {m.username}
+                  </MenuItem>
                 ))}
-            </Select>
-          </FormControl>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} style={{ width: '100%' }}>
+            <FormControl fullWidth size="medium" sx={{ mb: 1 }}>
+              <InputLabel>Split With</InputLabel>
+              <Select
+                multiple
+                value={splitWith}
+                label="Split With"
+                onChange={e => setSplitWith(e.target.value)}
+                renderValue={selected => selected.map(id => {
+                  const m = members.find(mem => mem.id === id);
+                  return m ? m.username : id;
+                }).join(', ')}
+                style={{ fontSize: 18 }}
+              >
+                <MenuItem
+                  value="all"
+                  onClick={() => {
+                    const allMemberIds = members.map(m => m.id);
+                    setSplitWith(splitWith.length === allMemberIds.length ? [] : allMemberIds);
+                  }}
+                  sx={{
+                    fontWeight: 600,
+                    backgroundColor: 'primary.light',
+                    color: 'white',
+                    '&:hover': { backgroundColor: 'primary.main' }
+                  }}
+                >
+                  {splitWith.length === members.length ? 'Deselect All' : 'Select All'}
+                </MenuItem>
+                <MenuItem sx={{ borderTop: '1px solid #ddd' }} disabled>
+                  ──────────────────
+                </MenuItem>
+                <MenuItem sx={{ p: 0 }}>
+                  <OutlinedInput
+                    placeholder="Search members..."
+                    value={splitSearch}
+                    onChange={(e) => setSplitSearch(e.target.value)}
+                    size="small"
+                    startAdornment={<SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />}
+                    sx={{
+                      width: '100%',
+                      '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                      '&:hover .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': { border: 'none' }
+                    }}
+                  />
+                </MenuItem>
+                {members
+                  .filter(m => m.username.toLowerCase().includes(splitSearch.toLowerCase()))
+                  .map(m => (
+                    <MenuItem key={m.id} value={m.id}>
+                      <Avatar sx={{ width: 24, height: 24, mr: 1 }}>{m.username[0]}</Avatar>
+                      {m.username}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={handleAddExpense}
+              disabled={adding}
+              fullWidth
+              sx={{ fontSize: 18, py: 1.2, borderRadius: 2, minWidth: 120 }}
+            >
+              Add
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={1} style={{ width: isMobile ? '100%' : undefined, display: 'flex', justifyContent: isMobile ? 'center' : 'flex-end' }}>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={handleAddExpense}
-            disabled={adding}
-            sx={{ fontSize: isMobile ? 18 : 15, py: isMobile ? 1.2 : 0.7, px: isMobile ? 3 : 2, borderRadius: 2, minWidth: isMobile ? 120 : 80 }}
-          >
-            Add
-          </Button>
-        </Grid>
-      </Grid>
-      <Button
-        variant="outlined"
-        startIcon={<PersonAddIcon />}
-        sx={{ mt: 2, mb: 2, fontSize: isMobile ? 17 : 14, py: isMobile ? 1.1 : 0.6, px: isMobile ? 2.5 : 1.5, borderRadius: 2 }}
-        onClick={() => setShowAddExternal(true)}
-      >
-        Add External Member
-      </Button>
-      <Dialog open={showAddExternal} onClose={() => setShowAddExternal(false)}>
-        <DialogTitle>Add External Member</DialogTitle>
-        <DialogContent>
-          <TextField
-            label="Name"
-            value={newExternalName}
-            onChange={e => setNewExternalName(e.target.value)}
-            fullWidth
-            autoFocus
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setShowAddExternal(false)}>Cancel</Button>
-          <Button onClick={handleAddExternal} variant="contained">Add</Button>
-        </DialogActions>
-      </Dialog>
-      <Typography variant="h6" sx={{ mt: 4, mb: 2, fontWeight: 700, color: '#1976d2' }}>Expenses</Typography>
-      <TableContainer component={Paper} sx={{ mb: 3, boxShadow: 2 }}>
-        <Table size={isMobile ? 'medium' : 'small'}>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: 'primary.light' }}>
-              <TableCell sx={{ fontWeight: 700, color: 'white' }}>Description</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'white' }}>Amount</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'white' }}>Paid By</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'white' }}>Split With</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'white' }}>Date</TableCell>
-              <TableCell sx={{ fontWeight: 700, color: 'white' }}>Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {expenses.map(exp => (
-              <TableRow key={exp.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'grey.50' } }}>
-                <TableCell sx={{ fontSize: isMobile ? 16 : 14 }}>{exp.description}</TableCell>
-                <TableCell sx={{ fontSize: isMobile ? 16 : 14, fontWeight: 600 }}>${exp.amount}</TableCell>
-                <TableCell sx={{ fontSize: isMobile ? 16 : 14 }}>{members.find(m => m.id === exp.paid_by)?.username || exp.paid_by}</TableCell>
-                <TableCell sx={{ fontSize: isMobile ? 16 : 14 }}>{exp.split_with ? exp.split_with.map(id => members.find(m => m.id === id)?.username || id).join(', ') : ''}</TableCell>
-                <TableCell sx={{ fontSize: isMobile ? 16 : 14 }}>{exp.date}</TableCell>
-                <TableCell>
-                  <IconButton size="small" color="error" onClick={() => handleDeleteExpense(exp.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
+        <Button
+          variant="outlined"
+          startIcon={<PersonAddIcon />}
+          sx={{ mt: 2, mb: 2, fontSize: 17, py: 1.1, borderRadius: 2 }}
+          fullWidth
+          onClick={() => setShowAddExternal(true)}
+        >
+          Add External Member
+        </Button>
+        <Dialog open={showAddExternal} onClose={() => setShowAddExternal(false)} fullWidth maxWidth="xs">
+          <DialogTitle>Add External Member</DialogTitle>
+          <DialogContent>
+            <TextField
+              label="Name"
+              value={newExternalName}
+              onChange={e => setNewExternalName(e.target.value)}
+              fullWidth
+              autoFocus
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowAddExternal(false)}>Cancel</Button>
+            <Button onClick={handleAddExternal} variant="contained">Add</Button>
+          </DialogActions>
+        </Dialog>
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main' }}>Expenses</Typography>
+        <TableContainer component={Paper} sx={{ mb: 3, boxShadow: 1, borderRadius: 2, background: theme.palette.background.paper }}>
+          <Table size={isMobile ? 'medium' : 'small'}>
+            <TableHead>
+              <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
+                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Description</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Amount</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Paid By</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Split With</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Date</TableCell>
+                <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary }}>Action</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Typography variant="h6" sx={{ mt: 4, mb: 2, fontWeight: 700, color: '#1976d2' }}>Balances</Typography>
-      <Box sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: 2 }}>
-        {balances.map((bal, idx) => (
-          <Card key={idx} sx={{ minWidth: 120, mb: isMobile ? 2 : 0, boxShadow: 2 }}>
-            <CardContent>
-              <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{bal.username}</Typography>
-              <Typography variant="body1" sx={{ color: bal.balance < 0 ? 'red' : 'green', fontWeight: 700 }}>
-                {bal.balance < 0 ? '-' : ''}${Math.abs(bal.balance).toFixed(2)}
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
-    </Box>
+            </TableHead>
+            <TableBody>
+              {expenses.map(exp => (
+                <TableRow key={exp.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'grey.50' } }}>
+                  <TableCell sx={{ fontSize: 16 }}>{exp.description}</TableCell>
+                  <TableCell sx={{ fontSize: 16, fontWeight: 600 }}>${exp.amount}</TableCell>
+                  <TableCell sx={{ fontSize: 16 }}>
+                    {(() => {
+                      const m = members.find(m => m.id === exp.paid_by);
+                      return m ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar sx={{ width: 24, height: 24, mr: 1 }}>{m.username[0]}</Avatar>
+                          {m.username}
+                        </Box>
+                      ) : exp.paid_by;
+                    })()}
+                  </TableCell>
+                  <TableCell sx={{ fontSize: 16 }}>{exp.split_with ? exp.split_with.map(id => {
+                    const m = members.find(m => m.id === id);
+                    return m ? m.username : id;
+                  }).join(', ') : ''}</TableCell>
+                  <TableCell sx={{ fontSize: 16 }}>{exp.date}</TableCell>
+                  <TableCell>
+                    <IconButton size="small" color="error" onClick={() => handleDeleteExpense(exp.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Divider sx={{ my: 3 }} />
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main' }}>Balances</Typography>
+        <Grid container spacing={2} direction={isMobile ? 'column' : 'row'}>
+          {balances.map((bal, idx) => (
+            <Grid item xs={12} sm={6} md={4} key={idx}>
+              <Card sx={{ minWidth: 120, boxShadow: 1, borderRadius: 2, background: theme.palette.background.paper }}>
+                <CardContent sx={{ textAlign: 'center' }}>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.text.primary }}>{bal.username}</Typography>
+                  <Typography variant="body1" sx={{ color: bal.balance < 0 ? theme.palette.error.main : theme.palette.success.main, fontWeight: 700 }}>
+                    {bal.balance < 0 ? '-' : ''}${Math.abs(bal.balance).toFixed(2)}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Paper>
+    </Container>
   );
 } 

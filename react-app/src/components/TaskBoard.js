@@ -13,7 +13,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
-import { Add as AddIcon, Delete as DeleteIcon, Edit as EditIcon, Check as CheckIcon, Close as CloseIcon, Comment as CommentIcon } from '@mui/icons-material';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
@@ -172,8 +171,6 @@ export function TaskBoard({ group, user }) {
       }).then(fetchTasks);
     }
   };
-
-  const groupedTasks = statusGroups.map(g => tasks.filter(t => t.status === g.key));
 
   return (
     <Card
@@ -391,8 +388,8 @@ export function TaskBoard({ group, user }) {
                 {statusGroups.map(sg => <option key={sg.key} value={sg.key}>{sg.label}</option>)}
               </select>
               <div style={{display: 'flex', gap: 8, marginTop: 8}}>
-                <Button className="btn-primary" onClick={handleEditSave}>Save</Button>
-                <Button className="btn-primary" style={{background: '#e53935'}} onClick={() => setEditTask(null)}>Cancel</Button>
+                <Button className="btn-primary" onClick={handleEditSave} sx={{ minHeight: { xs: 44, sm: 36 } }}>Save</Button>
+                <Button className="btn-primary" style={{background: '#e53935'}} onClick={() => setEditTask(null)} sx={{ minHeight: { xs: 44, sm: 36 } }}>Cancel</Button>
               </div>
             </div>
           )}
@@ -426,12 +423,12 @@ export function TaskBoard({ group, user }) {
               fullWidth
               multiline
               minRows={2}
-              sx={{ mt: 2 }}
+              sx={{ mt: 2, '& .MuiInputBase-input': { fontSize: { xs: '1rem', sm: '0.95rem' } } }}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseComments}>Close</Button>
-            <Button onClick={handleAddComment} variant="contained" disabled={!newComment.trim()}>Add Comment</Button>
+            <Button onClick={handleCloseComments} sx={{ minHeight: { xs: 44, sm: 36 } }}>Close</Button>
+            <Button onClick={handleAddComment} variant="contained" disabled={!newComment.trim()} sx={{ minHeight: { xs: 44, sm: 36 } }}>Add Comment</Button>
           </DialogActions>
         </Dialog>
       </CardContent>

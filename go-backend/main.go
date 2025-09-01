@@ -1336,6 +1336,44 @@ func getGroupMessagesHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(messages)
 }
 
+// Temporary admin endpoint to restore backup
+func restoreBackupHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Read the backup file
+	backupData, err := os.ReadFile("/home/alldb.sql")
+	if err != nil {
+		http.Error(w, "Failed to read backup file: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Split SQL statements and execute them
+	statements := strings.Split(string(backupData), ";")
+	for _, stmt := range statements {
+		stmt = strings.TrimSpace(stmt)
+		if stmt == "" {
+			continue
+		}
+		_, err := db.Exec(stmt)
+		if err != nil {
+			fmt.Printf("Warning: Failed to execute statement: %v\n", stmt[:min(50, len(stmt))])
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Backup restored successfully"})
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
 func main() {
 	var err error
 	db, err = connectToDB()
@@ -1397,6 +1435,7 @@ func main() {
 	})
 	mux.HandleFunc("/send-message", sendMessageHandler)
 	mux.HandleFunc("/group-messages", getGroupMessagesHandler)
+	mux.HandleFunc("/restore-backup", restoreBackupHandler)
 
 	// Apply CORS middleware
 	handler := enableCORS(mux)

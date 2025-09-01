@@ -1,18 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Box, 
-  Typography, 
-  TextField, 
-  Button, 
-  Card, 
-  CardContent, 
-  Avatar, 
-  Alert,
-  useMediaQuery,
-  useTheme
-} from '@mui/material';
-import { Save as SaveIcon, Upgrade as UpgradeIcon } from '@mui/icons-material';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
@@ -26,16 +13,7 @@ export function ProfileSettings({ user, setUser, selectedGroup, setSelectedGroup
   const [upgradePassword, setUpgradePassword] = useState('');
   const [upgradeError, setUpgradeError] = useState('');
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  
-  if (!user) return (
-    <Box sx={{ p: 4, textAlign: 'center' }}>
-      <Typography variant="h6" sx={{ color: 'text.secondary' }}>
-        Loading...
-      </Typography>
-    </Box>
-  );
+  if (!user) return <div style={{padding: 32, textAlign: 'center'}}>Loading...</div>;
 
   const handlePictureChange = e => {
     const file = e.target.files[0];
@@ -89,190 +67,27 @@ export function ProfileSettings({ user, setUser, selectedGroup, setSelectedGroup
   };
 
   return (
-    <Box
-      sx={{
-        maxWidth: 420,
-        margin: '3.5rem auto 0 auto',
-        p: { xs: 2, sm: 3 },
-      }}
-    >
-      <Card
-        sx={{
-          borderRadius: 3,
-          boxShadow: '0 4px 20px rgba(44,100,255,0.08)',
-          background: 'rgba(255,255,255,0.9)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid rgba(200,210,255,0.2)',
-        }}
-      >
-        <CardContent sx={{ p: { xs: 2, sm: 3 } }}>
-          <Typography variant="h5" sx={{ 
-            textAlign: 'center', 
-            color: '#2a6cff', 
-            mb: 3, 
-            fontWeight: 700 
-          }}>
-            Profile Settings
-          </Typography>
-          
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ position: 'relative', cursor: 'pointer' }}>
-              <Avatar
-                src={preview || '/logo192.png'}
-                alt="Profile"
-                sx={{ 
-                  width: 96, 
-                  height: 96, 
-                  boxShadow: '0 4px 16px rgba(44,100,255,0.15)',
-                  mb: 1
-                }}
-              />
-              <input
-                type="file"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handlePictureChange}
-                id="profile-pic-input"
-              />
-              <label htmlFor="profile-pic-input" style={{ cursor: 'pointer' }}>
-                <Typography variant="caption" sx={{ color: '#1976d2', fontWeight: 600 }}>
-                  Click to change
-                </Typography>
-              </label>
-            </Box>
-            
-            <TextField
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              placeholder="Username"
-              fullWidth
-              size="medium"
-              sx={{ 
-                '& .MuiOutlinedInput-root': { 
-                  borderRadius: 2,
-                  background: '#f7f9fc'
-                }
-              }}
-            />
-            
-            <TextField
-              value={phone}
-              onChange={e => setPhone(e.target.value)}
-              placeholder="Phone number for PayNow (optional)"
-              fullWidth
-              size="medium"
-              sx={{ 
-                '& .MuiOutlinedInput-root': { 
-                  borderRadius: 2,
-                  background: '#f7f9fc'
-                }
-              }}
-            />
-            
-            <Button
-              variant="contained"
-              startIcon={<SaveIcon />}
-              onClick={handleSave}
-              disabled={saving}
-              fullWidth
-              sx={{
-                background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
-                color: '#fff',
-                fontWeight: 700,
-                borderRadius: 2,
-                fontSize: isMobile ? '1.1rem' : '1.15rem',
-                py: 1.2,
-                mt: 1,
-                textTransform: 'none',
-                '&:hover': {
-                  background: 'linear-gradient(90deg, #6c47ff 0%, #2a6cff 100%)',
-                },
-                '&:disabled': {
-                  background: '#ccc',
-                  color: '#666',
-                },
-              }}
-            >
-              {saving ? 'Saving...' : 'Save Changes'}
-            </Button>
-            
-            {user.guest && !showUpgrade && (
-              <Button
-                variant="outlined"
-                startIcon={<UpgradeIcon />}
-                onClick={() => setShowUpgrade(true)}
-                fullWidth
-                sx={{
-                  color: '#1a237e',
-                  borderColor: '#1a237e',
-                  fontWeight: 700,
-                  borderRadius: 2,
-                  fontSize: isMobile ? '1.05rem' : '1.1rem',
-                  py: 1.1,
-                  mt: 1,
-                  textTransform: 'none',
-                  '&:hover': {
-                    background: 'rgba(26,35,126,0.08)',
-                    borderColor: '#1a237e',
-                    color: '#2a6cff',
-                  },
-                }}
-              >
-                Upgrade to Account
-              </Button>
-            )}
-            
-            {showUpgrade && (
-              <Box sx={{ width: '100%', mt: 1 }}>
-                <TextField
-                  type="password"
-                  value={upgradePassword}
-                  onChange={e => setUpgradePassword(e.target.value)}
-                  placeholder="Set a password"
-                  fullWidth
-                  size="medium"
-                  sx={{ 
-                    mb: 2,
-                    '& .MuiOutlinedInput-root': { 
-                      borderRadius: 2,
-                      background: '#f7f9fc'
-                    }
-                  }}
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleUpgrade}
-                  disabled={saving || !upgradePassword}
-                  fullWidth
-                  sx={{
-                    background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
-                    color: '#fff',
-                    fontWeight: 700,
-                    borderRadius: 2,
-                    fontSize: isMobile ? '1.1rem' : '1.15rem',
-                    py: 1.2,
-                    textTransform: 'none',
-                    '&:hover': {
-                      background: 'linear-gradient(90deg, #6c47ff 0%, #2a6cff 100%)',
-                    },
-                    '&:disabled': {
-                      background: '#ccc',
-                      color: '#666',
-                    },
-                  }}
-                >
-                  {saving ? 'Signing Up...' : 'Sign Up'}
-                </Button>
-                {upgradeError && (
-                  <Alert severity="error" sx={{ mt: 2, borderRadius: 2 }}>
-                    {upgradeError}
-                  </Alert>
-                )}
-              </Box>
-            )}
-          </Box>
-        </CardContent>
-      </Card>
-    </Box>
+    <div className="profile-settings-page" style={{maxWidth: 420, margin: '3.5rem auto 0 auto', background: '#fff', borderRadius: 16, boxShadow: '0 2px 16px rgba(44,100,255,0.08)', padding: '2.5rem 2rem'}}>
+      <h2 style={{textAlign: 'center', color: '#2a6cff', marginBottom: 24}}>Profile Settings</h2>
+      <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18}}>
+        <label htmlFor="profile-pic-input" style={{cursor: 'pointer'}}>
+          <img src={preview || '/logo192.png'} alt="Profile" style={{width: 96, height: 96, borderRadius: '50%', objectFit: 'cover', boxShadow: '0 2px 8px #2a6cff22', marginBottom: 8}} />
+          <input id="profile-pic-input" type="file" accept="image/*" style={{display: 'none'}} onChange={handlePictureChange} />
+        </label>
+        <input value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" style={{padding: '12px', borderRadius: 8, border: '1.5px solid #cfd8ff', width: '100%', fontSize: '1.1rem'}} />
+        <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone number for PayNow (optional)" style={{padding: '12px', borderRadius: 8, border: '1.5px solid #cfd8ff', width: '100%', fontSize: '1.1rem'}} />
+        <button className="btn-primary" onClick={handleSave} disabled={saving} style={{marginTop: 18, width: '100%'}}>{saving ? 'Saving...' : 'Save Changes'}</button>
+        {user.guest && !showUpgrade && (
+          <button className="btn-secondary" style={{marginTop: 18, width: '100%'}} onClick={() => setShowUpgrade(true)}>Upgrade to Account</button>
+        )}
+        {showUpgrade && (
+          <div style={{width: '100%', marginTop: 12}}>
+            <input type="password" value={upgradePassword} onChange={e => setUpgradePassword(e.target.value)} placeholder="Set a password" style={{padding: '12px', borderRadius: 8, border: '1.5px solid #cfd8ff', width: '100%', fontSize: '1.1rem', marginBottom: 8}} />
+            <button className="btn-primary" onClick={handleUpgrade} disabled={saving || !upgradePassword} style={{width: '100%'}}>{saving ? 'Signing Up...' : 'Sign Up'}</button>
+            {upgradeError && <div style={{color: '#f44336', marginTop: 8}}>{upgradeError}</div>}
+          </div>
+        )}
+      </div>
+    </div>
   );
 } 

@@ -1,42 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import DashboardLayout from './DashboardLayout';
 import { DateVoting } from './DateVoting';
 import { TaskBoard } from './TaskBoard';
 import { BudgetPanel } from './BudgetPanel';
 import { Chat } from './Chat';
-import { 
-  Box, 
-  Typography, 
-  Grid, 
-  Card, 
-  CardContent, 
-  Avatar, 
-  Chip, 
-  Select, 
-  MenuItem, 
-  FormControl, 
-  InputLabel, 
-  TextField, 
-  Button,
-  IconButton,
-  useMediaQuery,
-  useTheme
+import {
+  Container, Paper, Grid, Typography, Button, Select, MenuItem, FormControl, Divider, useMediaQuery, InputLabel, TextField
 } from '@mui/material';
-import { ContentCopy as CopyIcon } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
 export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [], onSelectGroup }) {
-  const [showInvite, setShowInvite] = useState(false);
   const [members, setMembers] = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [activeTab, setActiveTab] = useState('dashboard');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (group && group.id) {
       fetch(`${API_URL}/group-members?group_id=${group.id}`)
@@ -45,15 +24,9 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
         .catch(() => setMembers([]));
     }
   }, [group]);
-  
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-  
+
+  // Only construct inviteLink if group and group.code exist
   const inviteLink = group && group.code ? `${window.location.origin}/invite/${group.code}` : '';
-  
   const handleCopy = () => {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(inviteLink)
@@ -62,6 +35,7 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
         })
         .catch(() => alert('Failed to copy invite link.'));
     } else {
+      // Fallback for older browsers
       const textarea = document.createElement('textarea');
       textarea.value = inviteLink;
       document.body.appendChild(textarea);
@@ -75,134 +49,113 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
       document.body.removeChild(textarea);
     }
   };
-  
-  const handleMainClick = () => {
-    if (window.innerWidth <= 900 && sidebarOpen) setSidebarOpen(false);
-  };
-  
+
   return (
     <DashboardLayout members={members} onLogout={onLogout}>
       {!group || !group.id ? (
-        <Box sx={{ p: 4, textAlign: 'center' }}>
-          <Typography variant="h4" sx={{ color: '#1a237e', fontWeight: 700, mb: 2 }}>
-            No group selected
-          </Typography>
-          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            Please select a group to view the dashboard.
-          </Typography>
-        </Box>
+        <Container maxWidth="sm" sx={{ py: 6 }}>
+          <Paper elevation={2} sx={{ p: 4, textAlign: 'center', borderRadius: 3, background: theme.palette.background.paper }}>
+            <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: theme.palette.text.primary }}>No group selected</Typography>
+            <Typography variant="body1" sx={{ color: theme.palette.text.secondary }}>Please select a group to view the dashboard.</Typography>
+          </Paper>
+        </Container>
       ) : (
-        <>
-          {/* Group Picker */}
-          {userGroups.length > 1 && (
-            <Card sx={{ mb: 3, p: 3, borderRadius: 3, boxShadow: 2 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, color: '#1976d2' }}>
-                  Group:
-                </Typography>
-                <FormControl sx={{ minWidth: 200 }}>
-                  <Select
-                    value={group.id}
-                    onChange={e => {
-                      const selected = userGroups.find(g => String(g.id) === e.target.value);
-                      if (selected && onSelectGroup) onSelectGroup(selected);
-                    }}
-                    size="small"
-                    sx={{ borderRadius: 2 }}
+        <Container maxWidth="md" sx={{ py: isMobile ? 2 : 6 }}>
+          <Grid container spacing={isMobile ? 2 : 4} direction="column">
+            {/* Group Picker */}
+            {userGroups.length > 1 && (
+              <Grid item>
+                <Paper elevation={1} sx={{ p: isMobile ? 2 : 3, borderRadius: 3, display: 'flex', alignItems: 'center', gap: 2, flexWrap: isMobile ? 'wrap' : 'nowrap', background: theme.palette.background.paper }}>
+                  <Typography sx={{ fontWeight: 600, fontSize: 16, color: 'primary.main', mr: 2 }}>Group:</Typography>
+                  <FormControl size="small" sx={{ minWidth: 120, flex: 1 }}>
+                    <InputLabel>Group</InputLabel>
+                    <Select
+                      value={group.id}
+                      label="Group"
+                      onChange={e => {
+                        const selected = userGroups.find(g => String(g.id) === e.target.value);
+                        if (selected && onSelectGroup) onSelectGroup(selected);
+                      }}
+                    >
+                      {userGroups.map(g => (
+                        <MenuItem key={g.id} value={g.id}>{g.name}</MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    sx={{ ml: 'auto', fontWeight: 700, borderRadius: 2, minWidth: isMobile ? 120 : 100 }}
+                    onClick={handleCopy}
                   >
-                    {userGroups.map(g => (
-                      <MenuItem key={g.id} value={g.id}>{g.name || g.code}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                  {group.name || group.code}
+                    Copy Invite Link
+                  </Button>
+                </Paper>
+              </Grid>
+            )}
+            {/* Invite People Section */}
+            <Grid item>
+              <Paper elevation={1} sx={{ p: isMobile ? 2 : 3, borderRadius: 3, background: theme.palette.background.paper }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main', mb: 2, textAlign: isMobile ? 'center' : 'left' }}>
+                  Invite People
                 </Typography>
-              </Box>
-            </Card>
-          )}
-          
-          {/* Invite People Section */}
-          <Card sx={{ mb: 3, p: 3, borderRadius: 3, boxShadow: 2 }}>
-            <Typography variant="h6" sx={{ fontWeight: 700, color: '#1976d2', mb: 2 }}>
-              Invite People
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
-              <TextField
-                value={inviteLink}
-                fullWidth
-                size="small"
-                InputProps={{ readOnly: true }}
-                sx={{ 
-                  flex: 1, 
-                  minWidth: 200,
-                  '& .MuiOutlinedInput-root': { borderRadius: 2 }
-                }}
-              />
-              <Button
-                variant="contained"
-                startIcon={<CopyIcon />}
-                onClick={handleCopy}
-                sx={{
-                  background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
-                  color: '#fff',
-                  fontWeight: 600,
-                  borderRadius: 2,
-                  px: 3,
-                  py: 1,
-                  textTransform: 'none',
-                  '&:hover': {
-                    background: 'linear-gradient(90deg, #6c47ff 0%, #2a6cff 100%)',
-                  },
-                }}
-              >
-                Copy Link
-              </Button>
-            </Box>
-          </Card>
-          
-          <Grid container spacing={3}>
-            {/* Date Voting Card */}
-            <Grid item xs={12} md={6}>
-              <Card sx={{ p: 3, borderRadius: 3, boxShadow: 2, height: '100%' }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: '#1976d2', mb: 3 }}>
-                  Date Voting
-                </Typography>
-                <DateVoting user={user} group={group} />
-              </Card>
+                <Grid container spacing={2} direction={isMobile ? 'column' : 'row'} alignItems="center">
+                  <Grid item xs={12} sm={9}>
+                    <TextField
+                      value={inviteLink}
+                      label="Invite Link"
+                      fullWidth
+                      InputProps={{ readOnly: true }}
+                      size="small"
+                      sx={{ color: theme.palette.text.primary }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={3}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth={isMobile}
+                      sx={{ fontWeight: 600, borderRadius: 2, minHeight: 44 }}
+                      onClick={handleCopy}
+                    >
+                      Copy Link
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Paper>
             </Grid>
-            
-            {/* Task Board Card */}
-            <Grid item xs={12} md={6}>
-              <Card sx={{ p: 3, borderRadius: 3, boxShadow: 2, height: '100%' }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: '#1976d2', mb: 3 }}>
-                  Tasks
-                </Typography>
-                <TaskBoard user={user} group={group} />
-              </Card>
-            </Grid>
-            
-            {/* Budget Panel Card */}
-            <Grid item xs={12} md={6}>
-              <Card sx={{ p: 3, borderRadius: 3, boxShadow: 2, height: '100%' }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: '#1976d2', mb: 3 }}>
-                  Budget
-                </Typography>
-                <BudgetPanel user={user} group={group} />
-              </Card>
-            </Grid>
-            
-            {/* Chat Card */}
-            <Grid item xs={12} md={6}>
-              <Card sx={{ p: 3, borderRadius: 3, boxShadow: 2, height: '100%' }}>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: '#1976d2', mb: 3 }}>
-                  Group Chat
-                </Typography>
-                <Chat user={user} group={group} />
-              </Card>
+            <Divider sx={{ my: isMobile ? 2 : 4 }} />
+            {/* Main Dashboard Cards */}
+            <Grid item>
+              <Grid container spacing={isMobile ? 2 : 4}>
+                <Grid item xs={12} md={6}>
+                  <Paper elevation={2} sx={{ p: isMobile ? 2 : 3, borderRadius: 3, mb: isMobile ? 2 : 0, background: theme.palette.background.paper }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main', mb: 2 }}>Date Voting</Typography>
+                    <DateVoting user={user} group={group} />
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Paper elevation={2} sx={{ p: isMobile ? 2 : 3, borderRadius: 3, mb: isMobile ? 2 : 0, background: theme.palette.background.paper }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main', mb: 2 }}>Tasks</Typography>
+                    <TaskBoard user={user} group={group} />
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Paper elevation={2} sx={{ p: isMobile ? 2 : 3, borderRadius: 3, mb: isMobile ? 2 : 0, background: theme.palette.background.paper }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main', mb: 2 }}>Budget</Typography>
+                    <BudgetPanel user={user} group={group} />
+                  </Paper>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Paper elevation={2} sx={{ p: isMobile ? 2 : 3, borderRadius: 3, mb: isMobile ? 2 : 0, background: theme.palette.background.paper }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main', mb: 2 }}>Group Chat</Typography>
+                    <Chat user={user} group={group} />
+                  </Paper>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
-        </>
+        </Container>
       )}
     </DashboardLayout>
   );

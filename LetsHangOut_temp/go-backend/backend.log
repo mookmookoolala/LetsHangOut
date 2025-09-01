@@ -20,3 +20,7 @@ Starting server on port 8085
 [mysql] 2025/08/31 15:53:05 packets.go:155 write tcp 10.0.0.186:51000->195.85.19.115:3306: write: broken pipe
 [mysql] 2025/08/31 15:53:05 connection.go:706 closing bad idle connection: unexpected read from socket
 [mysql] 2025/08/31 15:53:05 packets.go:155 write tcp 10.0.0.186:52084->195.85.19.115:3306: write: broken pipe
+[mysql] 2025/09/01 01:52:38 connection.go:706 closing bad idle connection: unexpected read from socket
+[mysql] 2025/09/01 01:52:38 packets.go:155 write tcp 10.0.0.186:36660->195.85.19.115:3306: write: broken pipe
+[mysql] 2025/09/01 01:52:38 connection.go:706 closing bad idle connection: unexpected read from socket
+[mysql] 2025/09/01 01:52:38 packets.go:155 write tcp 10.0.0.186:51236->195.85.19.115:3306: write: broken pipe

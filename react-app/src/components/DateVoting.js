@@ -18,7 +18,6 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
-import EventBusyIcon from '@mui/icons-material/EventBusy';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
