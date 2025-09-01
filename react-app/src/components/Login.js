@@ -26,38 +26,98 @@ function Login({ onLogin, onSwitchToRegister, onGuest }) {
     >
       <Card
         sx={{
-          maxWidth: 400,
+          maxWidth: 420,
           width: '100%',
           borderRadius: 5,
-          boxShadow: '0 8px 32px rgba(44,100,255,0.10), 0 1.5px 8px rgba(44,100,255,0.04)',
-          background: 'rgba(255,255,255,0.7)',
-          backdropFilter: 'blur(12px)',
-          border: '1.5px solid rgba(200,210,255,0.18)',
-          p: { xs: 2, sm: 3 },
+          boxShadow: '0 20px 60px rgba(44,100,255,0.15), 0 1.5px 8px rgba(44,100,255,0.04)',
+          background: 'rgba(255,255,255,0.85)',
+          backdropFilter: 'blur(20px)',
+          border: '1.5px solid rgba(255,255,255,0.3)',
+          p: { xs: 3, sm: 4 },
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            transform: 'translateY(-5px)',
+            boxShadow: '0 30px 80px rgba(44,100,255,0.2), 0 1.5px 8px rgba(44,100,255,0.04)',
+          },
         }}
       >
         <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', p: 0 }}>
           <Box
             sx={{
-              width: 96,
-              height: 96,
+              width: 110,
+              height: 110,
               borderRadius: '50%',
-              background: '#fff',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 24px rgba(44,100,255,0.10)',
-              mb: 2,
+              boxShadow: '0 10px 30px rgba(44,100,255,0.15)',
+              mb: 3,
+              position: 'relative',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                width: '140%',
+                height: '140%',
+                background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
+                borderRadius: '50%',
+                opacity: 0.1,
+                zIndex: -1,
+                animation: 'pulse 2s infinite',
+              },
+              '@keyframes pulse': {
+                '0%': {
+                  transform: 'scale(0.95)',
+                  opacity: 0.1,
+                },
+                '70%': {
+                  transform: 'scale(1)',
+                  opacity: 0.15,
+                },
+                '100%': {
+                  transform: 'scale(0.95)',
+                  opacity: 0.1,
+                },
+              },
             }}
           >
             <img
               src="https://letshangout.s3.us-east-1.amazonaws.com/icons/LHO8-removebg-preview+(1).png"
               alt="Letshangout Logo"
-              style={{ width: 64, height: 64, borderRadius: '50%' }}
+              style={{ 
+                width: 80, 
+                height: 80, 
+                borderRadius: '50%',
+                transition: 'all 0.3s ease',
+              }}
             />
           </Box>
-          <Typography variant="h4" sx={{ color: '#1a237e', fontWeight: 800, mb: 2, letterSpacing: 1, textAlign: 'center', textShadow: '0 1px 8px #f5f7fa' }}>
-            Login
+          <Typography 
+            variant="h3" 
+            sx={{ 
+              fontWeight: 800, 
+              mb: 1,
+              background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              letterSpacing: 1, 
+              textAlign: 'center', 
+              textShadow: '0 2px 10px rgba(44, 100, 255, 0.15)'
+            }}
+          >
+            Welcome Back
+          </Typography>
+          <Typography 
+            variant="subtitle1" 
+            sx={{ 
+              color: '#5a5a89', 
+              maxWidth: '280px', 
+              mx: 'auto',
+              mb: 4,
+              textAlign: 'center',
+            }}
+          >
+            Sign in to continue your journey with Let's Hang Out
           </Typography>
           <TextField
             label="Username"
@@ -192,4 +252,4 @@ function Login({ onLogin, onSwitchToRegister, onGuest }) {
   );
 }
 
-export default Login; 
+export default Login;

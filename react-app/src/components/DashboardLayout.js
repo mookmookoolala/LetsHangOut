@@ -29,7 +29,7 @@ import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import Fab from '@mui/material/Fab';
 import AddIcon from '@mui/icons-material/Add';
 
-const drawerWidth = 220;
+const drawerWidth = 240;
 
 const navLinks = [
   { name: 'Dashboard', icon: <DashboardIcon />, to: '/' },
@@ -53,40 +53,130 @@ export default function DashboardLayout({ children, members, onLogout }) {
 
   const drawer = (
     <div>
-      <Toolbar sx={{ justifyContent: 'center', mb: 2 }}>
+      <Toolbar sx={{ justifyContent: 'center', mb: 3 }}>
         <Box
           component="img"
           src="https://letshangout.s3.us-east-1.amazonaws.com/icons/LHO8-removebg-preview+(1).png"
           alt="Letshangout Logo"
-          sx={{ width: 56, height: 56, borderRadius: '50%', boxShadow: 2, cursor: 'pointer' }}
+          sx={{ 
+            width: 64, 
+            height: 64, 
+            borderRadius: '50%', 
+            boxShadow: '0 8px 24px rgba(44, 100, 255, 0.15)', 
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              transform: 'scale(1.05)',
+              boxShadow: '0 12px 30px rgba(44, 100, 255, 0.2)',
+            } 
+          }}
           onClick={() => navigate('/')}
         />
       </Toolbar>
       <Divider />
-      <List>
-        {navLinks.map((link) => (
-          <ListItem key={link.name} disablePadding>
-            <ListItemButton component={Link} to={link.to}>
-              <ListItemIcon>{link.icon}</ListItemIcon>
-              <ListItemText primary={link.name} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+      <List sx={{ px: 1 }}>
+        {navLinks.map((link) => {
+          const isActive = location.pathname === link.to || 
+            (link.to !== '/' && location.pathname.startsWith(link.to));
+          return (
+            <ListItem key={link.name} disablePadding sx={{ mb: 1 }}>
+              <ListItemButton 
+                component={Link} 
+                to={link.to}
+                selected={isActive}
+                sx={{ 
+                  borderRadius: 2,
+                  py: 1.2,
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <ListItemIcon sx={{ 
+                  color: isActive ? 'primary.main' : 'text.secondary',
+                  minWidth: 40 
+                }}>
+                  {link.icon}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={link.name} 
+                  primaryTypographyProps={{ 
+                    fontWeight: isActive ? 700 : 500,
+                    fontSize: '0.95rem'
+                  }} 
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
       <Divider />
       {/* Group Members Section */}
       {Array.isArray(members) && members.length > 0 && (
-        <Box sx={{ px: 2, py: 1, textAlign: 'center' }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.secondary', mb: 1 }}>
-            Group Members
+        <Box sx={{ px: 2, py: 2, textAlign: 'center', mt: 2 }}>
+          <Typography 
+            variant="subtitle2" 
+            sx={{ 
+              fontWeight: 700, 
+              color: 'primary.main', 
+              mb: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
+              '&::before, &::after': {
+                content: '""',
+                height: '1px',
+                flex: 1,
+                background: 'rgba(44, 100, 255, 0.1)',
+              }
+            }}
+          >
+            GROUP MEMBERS
           </Typography>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, alignItems: 'center' }}>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            gap: 1.5, 
+            alignItems: 'center',
+            mt: 1,
+          }}>
             {members.map((m) => (
-              <Box key={m.id} sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                <Avatar sx={{ width: 28, height: 28, fontSize: 15, bgcolor: '#1976d2', mr: 1 }} src={m.picture || undefined}>
+              <Box 
+                key={m.id} 
+                sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: 1.5, 
+                  mb: 0.5,
+                  width: '100%',
+                  p: 1,
+                  borderRadius: 2,
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    backgroundColor: 'rgba(44, 100, 255, 0.04)',
+                  }
+                }}
+              >
+                <Avatar 
+                  sx={{ 
+                    width: 36, 
+                    height: 36, 
+                    fontSize: 16, 
+                    bgcolor: 'primary.main', 
+                    boxShadow: '0 2px 8px rgba(44, 100, 255, 0.2)' 
+                  }} 
+                  src={m.picture || undefined}
+                >
                   {m.username ? m.username[0].toUpperCase() : '?'}
                 </Avatar>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontWeight: 600,
+                    color: 'text.primary',
+                    flex: 1,
+                    textAlign: 'left',
+                  }}
+                >
                   {m.username}
                 </Typography>
               </Box>
@@ -318,4 +408,4 @@ export default function DashboardLayout({ children, members, onLogout }) {
       )}
     </Box>
   );
-} 
+}

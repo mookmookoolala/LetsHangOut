@@ -210,7 +210,7 @@ function App() {
     };
     window.addEventListener('beforeinstallprompt', handler);
     return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
+  }, [isMobile]);
   // Hide prompt if already installed
   useEffect(() => {
     const handler = () => setShowInstallPrompt(false);
@@ -326,15 +326,8 @@ function App() {
       });
   };
 
-  const handleSendMessage = (text) => {
-    // Implementation of handleSendMessage
-  };
-  const handleAddTodo = (task, date, assignee) => {
-    // Implementation of handleAddTodo
-  };
-  const handleCompleteTodo = (idx) => {
-    // Implementation of handleCompleteTodo
-  };
+  // These functions are defined but not currently used
+  // They are kept for future implementation
 
   const handleGuest = () => {
     setShowGuestPrompt(true);
@@ -355,23 +348,66 @@ function App() {
         setSelectedGroup(null);
         setUserGroups([]);
         setUserGroupsLoading(true);
-        // Fetch groups for guest user
-        fetch(`${API_URL}/my-groups?user_id=${user.id}`)
-          .then(res => res.json())
-          .then(groups => {
-            console.log('Guest login - fetched groups:', groups);
-            setUserGroups(groups || []);
-            // Don't automatically select a group - let user choose
-            setSelectedGroup(null);
-            setShowJoin(false);
-            setUserGroupsLoading(false);
+        
+        // Check if there's a pending invite code from localStorage
+        const pendingInviteCode = localStorage.getItem('pendingInviteCode');
+        
+        if (pendingInviteCode) {
+          // Join the group with the invite code
+          fetch(`${API_URL}/join-group`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: pendingInviteCode, user_id: user.id })
           })
-          .catch((error) => {
-            console.error('Guest login - error fetching groups:', error);
-            setUserGroups([]);
-            setSelectedGroup(null);
-            setUserGroupsLoading(false);
-          });
+            .then(res => {
+              if (!res.ok) return res.text().then(text => { throw new Error(text); });
+              return res.json();
+            })
+            .then(data => {
+              // Clear the pending invite code
+              localStorage.removeItem('pendingInviteCode');
+              
+              // Fetch groups for guest user after joining
+              return fetch(`${API_URL}/my-groups?user_id=${user.id}`)
+                .then(res => res.json())
+                .then(groups => {
+                  console.log('Guest login with invite - fetched groups:', groups);
+                  setUserGroups(groups || []);
+                  // Select the joined group
+                  setSelectedGroup(data.group);
+                  setShowJoin(false);
+                  setUserGroupsLoading(false);
+                });
+            })
+            .catch(error => {
+              console.error('Error joining group with invite code:', error);
+              // If joining fails, just fetch groups normally
+              fetchGuestGroups(user.id);
+            });
+        } else {
+          // No pending invite, just fetch groups normally
+          fetchGuestGroups(user.id);
+        }
+      });
+  };
+  
+  // Helper function to fetch guest groups
+  const fetchGuestGroups = (userId) => {
+    fetch(`${API_URL}/my-groups?user_id=${userId}`)
+      .then(res => res.json())
+      .then(groups => {
+        console.log('Guest login - fetched groups:', groups);
+        setUserGroups(groups || []);
+        // Don't automatically select a group - let user choose
+        setSelectedGroup(null);
+        setShowJoin(false);
+        setUserGroupsLoading(false);
+      })
+      .catch((error) => {
+        console.error('Guest login - error fetching groups:', error);
+        setUserGroups([]);
+        setSelectedGroup(null);
+        setUserGroupsLoading(false);
       });
   };
 

@@ -39,11 +39,7 @@ export function ProfileSettings({ user, setUser, selectedGroup, setSelectedGroup
     });
     setUser(updated);
     setSaving(false);
-    if (selectedGroup) {
-      navigate('/');
-    } else {
-      navigate('/');
-    }
+    // Stay on the profile page after saving
   };
 
   const handleUpgrade = async () => {
@@ -90,4 +86,4 @@ export function ProfileSettings({ user, setUser, selectedGroup, setSelectedGroup
       </div>
     </div>
   );
-} 
+}
