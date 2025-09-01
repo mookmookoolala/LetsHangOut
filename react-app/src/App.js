@@ -12,6 +12,7 @@ import DashboardLayout from './components/DashboardLayout';
 import { InviteJoin } from './components/InviteJoin';
 import { ProfileSettings } from './components/ProfileSettings';
 import { Dashboard } from './components/Dashboard';
+import { ApiTest } from './components/ApiTest';
 import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -734,6 +735,7 @@ function App() {
             </DashboardLayout>
           </RequireAuth>
         } />
+        <Route path="/api-test" element={<ApiTest />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
