@@ -16,7 +16,9 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [], onSelectGroup }) {
   const [members, setMembers] = useState([]);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Used by Material-UI for responsive design
+  // Define isMobile for responsive design
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // Initialize navigate for routing
   const navigate = useNavigate();
 
   useEffect(() => {

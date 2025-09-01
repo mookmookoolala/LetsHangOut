@@ -29,7 +29,9 @@ const handleApiError = (response, errorMessage = 'Operation failed') => {
   return response.json();
 };
 
-// Consistent API call wrapper
+// Consistent API call wrapper - commented out as it's not currently used
+// but will be useful for future API calls
+/*
 const apiCall = async (endpoint, options = {}, errorMessage = 'Operation failed') => {
   try {
     const response = await fetch(`${API_URL}${endpoint}`, {
@@ -41,6 +43,7 @@ const apiCall = async (endpoint, options = {}, errorMessage = 'Operation failed'
     throw new Error(error.message || errorMessage);
   }
 };
+*/
 
 function useAppVersionChecker() {
   const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -66,7 +69,8 @@ function useAppVersionChecker() {
   return updateAvailable;
 }
 
-function isMobile(isMobile) {
+// Utility function to detect mobile devices
+function detectMobileDevice() {
   return /android|iphone|ipad|ipod|opera mini|iemobile|mobile/i.test(navigator.userAgent);
 }
 
@@ -185,7 +189,8 @@ function App() {
   const updateAvailable = useAppVersionChecker();
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-  const userHasGroups = user && userGroups && userGroups.length > 0;
+  // Commented out as it's not currently used but may be needed later
+  // const userHasGroups = user && userGroups && userGroups.length > 0;
   const [showJoin, setShowJoin] = useState(false);
   const [userGroupsLoading, setUserGroupsLoading] = useState(false);
   const theme = useTheme();
@@ -411,6 +416,8 @@ function App() {
       });
   };
 
+  // Commented out as it's not currently used but will be needed for group deletion functionality
+  /*
   function handleDeleteGroup(g) {
     if (window.confirm('Are you sure you want to delete this group? This cannot be undone.')) {
       fetch(`${API_URL}/delete-group`, {
@@ -431,7 +438,10 @@ function App() {
         .catch(err => alert('Failed to delete group: ' + err.message));
     }
   }
+  */
 
+  // Commented out as it's not currently used but will be needed for group leaving functionality
+  /*
   function handleLeaveGroup(g) {
     if (window.confirm('Are you sure you want to leave this group?')) {
       fetch(`${API_URL}/leave-group`, {
@@ -452,6 +462,7 @@ function App() {
         .catch(err => alert('Failed to leave group: ' + err.message));
     }
   }
+  */
 
   function handleSidebarDeleteGroup() {
     if (window.confirm('Are you sure you want to delete this group? This cannot be undone.')) {

@@ -4,7 +4,6 @@ import {
   Typography, 
   TextField, 
   Button, 
-  Paper, 
   Avatar,
   useMediaQuery,
   useTheme
@@ -16,7 +15,8 @@ export function Chat({ user, group }) {
   const [input, setInput] = useState('');
   const messagesEndRef = useRef(null);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  // Commented out as it's not currently used but will be needed for responsive design
+  // const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   // Fetch messages from backend (initial and polling)
   useEffect(() => {
@@ -155,4 +155,4 @@ export function Chat({ user, group }) {
       </Box>
     </Box>
   );
-} 
+}
