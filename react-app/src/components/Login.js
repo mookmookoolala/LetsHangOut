@@ -28,7 +28,7 @@ function Login({ onLogin, onSwitchToRegister, onGuest }) {
         sx={{
           maxWidth: 420,
           width: '100%',
-          borderRadius: 5,
+          borderRadius: 0,
           boxShadow: '0 20px 60px rgba(44,100,255,0.15), 0 1.5px 8px rgba(44,100,255,0.04)',
           background: 'rgba(255,255,255,0.85)',
           backdropFilter: 'blur(20px)',
@@ -46,7 +46,7 @@ function Login({ onLogin, onSwitchToRegister, onGuest }) {
             sx={{
               width: 110,
               height: 110,
-              borderRadius: '50%',
+              borderRadius: 0,
               background: 'linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%)',
               display: 'flex',
               alignItems: 'center',
@@ -60,7 +60,7 @@ function Login({ onLogin, onSwitchToRegister, onGuest }) {
                 width: '140%',
                 height: '140%',
                 background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
-                borderRadius: '50%',
+                borderRadius: 0,
                 opacity: 0.1,
                 zIndex: -1,
                 animation: 'pulse 2s infinite',
@@ -87,7 +87,7 @@ function Login({ onLogin, onSwitchToRegister, onGuest }) {
               style={{ 
                 width: 80, 
                 height: 80, 
-                borderRadius: '50%',
+                borderRadius: 0,
                 transition: 'all 0.3s ease',
               }}
             />

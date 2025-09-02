@@ -6,6 +6,7 @@ import { BudgetPanel } from './BudgetPanel';
 import { Chat } from './Chat';
 import { InviteUser } from './InviteUser';
 import { PendingInvites } from './PendingInvites';
+import { ManageUsersDialog } from './ManageUsersDialog';
 import PullToRefresh from './PullToRefresh';
 import {
   Container, Paper, Grid, Typography, Button, Select, MenuItem, FormControl, Divider, useMediaQuery, TextField, InputLabel
@@ -19,6 +20,7 @@ const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [], onSelectGroup }) {
   const [members, setMembers] = useState([]);
   const [showInviteDialog, setShowInviteDialog] = useState(false);
+  const [showManageUsersDialog, setShowManageUsersDialog] = useState(false);
   const [showPendingInvites, setShowPendingInvites] = useState(false);
   const [inviteCount, setInviteCount] = useState(0);
   const theme = useTheme();
@@ -61,12 +63,16 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
     fetchGroupMembers();
     fetchPendingInvites();
     
-    // Add event listener for opening invite dialog
+    // Add event listeners for opening dialogs
     const handleOpenInviteDialog = () => setShowInviteDialog(true);
+    const handleOpenManageUsersDialog = () => setShowManageUsersDialog(true);
+    
     window.addEventListener('open-invite-dialog', handleOpenInviteDialog);
+    window.addEventListener('open-manage-users-dialog', handleOpenManageUsersDialog);
     
     return () => {
       window.removeEventListener('open-invite-dialog', handleOpenInviteDialog);
+      window.removeEventListener('open-manage-users-dialog', handleOpenManageUsersDialog);
     };
   }, [fetchGroupMembers, fetchPendingInvites]);
 
@@ -136,7 +142,19 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
       {showInviteDialog && <InviteUser group={group} userId={user?.id} onClose={() => setShowInviteDialog(false)} onInviteSent={fetchPendingInvites} />}
       {showPendingInvites && <PendingInvites user={user} onClose={() => setShowPendingInvites(false)} onAccept={handleAcceptInvite} onUpdate={fetchPendingInvites} />}
       <PullToRefresh onRefresh={handleRefresh}>
-      {!group || !group.id ? (
+        <Box 
+          className={isMobile ? 'mobile-fade-in' : ''}
+          sx={{
+            maxWidth: '100%',
+            mx: 'auto',
+            px: isMobile ? 0 : 2,
+            '& > *': {
+              mb: { xs: 2, sm: 3 }
+            },
+            overflowX: 'hidden'
+          }}
+        >
+          {!group || !group.id ? (
         <Container maxWidth="sm" sx={{ py: 6 }}>
           <Paper 
             elevation={2} 
@@ -642,7 +660,34 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
           </Grid>
         </Container>
       )}
+        </Box>
       </PullToRefresh>
+
+      {/* Dialogs */}
+      {showInviteDialog && (
+        <InviteUser
+          open={showInviteDialog}
+          onClose={() => setShowInviteDialog(false)}
+          group={group}
+        />
+      )}
+
+      {showManageUsersDialog && (
+        <ManageUsersDialog
+          open={showManageUsersDialog}
+          onClose={() => setShowManageUsersDialog(false)}
+          group={group}
+        />
+      )}
+
+      {showPendingInvites && (
+        <PendingInvites
+          open={showPendingInvites}
+          onClose={() => setShowPendingInvites(false)}
+          onAccept={handleAcceptInvite}
+          user={user}
+        />
+      )}
     </DashboardLayout>
   );
 }

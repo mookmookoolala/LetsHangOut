@@ -151,7 +151,7 @@ export const BudgetPanel = ({ group, user }) => {
   // The component's return statement
   return (
     <React.Fragment>
-      <Container maxWidth="sm" sx={{ py: isMobile ? 1 : 4 }}>
+      <Container maxWidth="sm" sx={{ py: isMobile ? 1 : 4, px: isMobile ? 1 : 2 }}>
         <Paper elevation={2} sx={{ p: isMobile ? 2 : 4, borderRadius: 0, background: theme.palette.background.paper }}>
           <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', textAlign: 'center', fontSize: isMobile ? 28 : 24 }}>Budget Panel</Typography>
           <Divider sx={{ mb: 3 }} />
@@ -306,42 +306,42 @@ export const BudgetPanel = ({ group, user }) => {
         </Dialog>
         <Divider sx={{ my: 3 }} />
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Expenses</Typography>
-        <TableContainer component={Paper} sx={{ mb: 3, boxShadow: 1, borderRadius: 2, background: theme.palette.background.paper, overflowX: isMobile ? 'auto' : 'hidden' }}>
-          <Table size={isMobile ? 'medium' : 'small'}>
+        <TableContainer component={Paper} sx={{ mb: 3, boxShadow: 1, borderRadius: 2, background: theme.palette.background.paper, overflowX: 'auto', maxWidth: '100%' }}>
+          <Table size={isMobile ? 'small' : 'medium'} sx={{ minWidth: isMobile ? 650 : 750 }}>
             <TableHead>
                 <TableRow sx={{ backgroundColor: theme.palette.grey[100] }}>
-                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Description</TableCell>
-                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Amount</TableCell>
-                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Paid By</TableCell>
-                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Split With</TableCell>
-                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Date</TableCell>
-                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16, whiteSpace: 'nowrap', padding: isMobile ? '16px 12px' : undefined }}>Action</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 14 : 16, whiteSpace: 'nowrap', padding: isMobile ? '10px 8px' : undefined }}>Description</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 14 : 16, whiteSpace: 'nowrap', padding: isMobile ? '10px 8px' : undefined }}>Amount</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 14 : 16, whiteSpace: 'nowrap', padding: isMobile ? '10px 8px' : undefined }}>Paid By</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 14 : 16, whiteSpace: 'nowrap', padding: isMobile ? '10px 8px' : undefined }}>Split With</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 14 : 16, whiteSpace: 'nowrap', padding: isMobile ? '10px 8px' : undefined }}>Date</TableCell>
+                 <TableCell sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 14 : 16, whiteSpace: 'nowrap', padding: isMobile ? '10px 8px' : undefined }}>Action</TableCell>
                 </TableRow>
               </TableHead>
             <TableBody>
               {expenses.map(exp => (
                 <TableRow key={exp.id} sx={{ '&:nth-of-type(odd)': { backgroundColor: 'grey.50' } }}>
-                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 120 : undefined }}>{exp.description}</TableCell>
-                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, fontWeight: 600, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 100 : undefined }}>${exp.amount}</TableCell>
-                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 120 : undefined }}>
+                  <TableCell sx={{ fontSize: isMobile ? 14 : 16, padding: isMobile ? '10px 8px' : undefined, minWidth: isMobile ? 100 : undefined }}>{exp.description}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? 14 : 16, fontWeight: 600, padding: isMobile ? '10px 8px' : undefined, minWidth: isMobile ? 80 : undefined }}>${exp.amount}</TableCell>
+                  <TableCell sx={{ fontSize: isMobile ? 14 : 16, padding: isMobile ? '10px 8px' : undefined, minWidth: isMobile ? 100 : undefined }}>
                     {(() => {
                       const m = members.find(m => m.id === exp.paid_by);
                       return m ? (
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                          <Avatar sx={{ width: 24, height: 24, mr: 1 }}>{m.username[0]}</Avatar>
+                          <Avatar sx={{ width: isMobile ? 20 : 24, height: isMobile ? 20 : 24, mr: 1 }}>{m.username[0]}</Avatar>
                           {m.username}
                         </Box>
                       ) : exp.paid_by;
                     })()}
                   </TableCell>
-                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 150 : undefined }}>{exp.split_with ? exp.split_with.map(id => {
+                  <TableCell sx={{ fontSize: isMobile ? 14 : 16, padding: isMobile ? '10px 8px' : undefined, minWidth: isMobile ? 120 : undefined }}>{exp.split_with ? exp.split_with.map(id => {
                     const m = members.find(m => m.id === id);
                     return m ? m.username : id;
                   }).join(', ') : ''}</TableCell>
-                  <TableCell sx={{ fontSize: isMobile ? 18 : 16, padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 100 : undefined }}>{exp.date}</TableCell>
-                  <TableCell sx={{ padding: isMobile ? '16px 12px' : undefined, minWidth: isMobile ? 80 : undefined }}>
+                  <TableCell sx={{ fontSize: isMobile ? 14 : 16, padding: isMobile ? '10px 8px' : undefined, minWidth: isMobile ? 80 : undefined }}>{exp.date}</TableCell>
+                  <TableCell sx={{ padding: isMobile ? '10px 8px' : undefined, minWidth: isMobile ? 60 : undefined }}>
                     <IconButton size="small" color="error" onClick={() => handleDeleteExpense(exp.id)}>
-                      <DeleteIcon />
+                      <DeleteIcon fontSize={isMobile ? 'small' : 'medium'} />
                     </IconButton>
                   </TableCell>
                 </TableRow>
@@ -362,7 +362,7 @@ export const BudgetPanel = ({ group, user }) => {
             Settle Balance
           </Button>
         </Box>
-        <Grid container spacing={2} direction={isMobile ? 'column' : 'row'}>
+        <Grid container spacing={isMobile ? 1 : 2} direction={isMobile ? 'column' : 'row'} sx={{ maxWidth: '100%', overflow: 'hidden' }}>
           {balances.map((bal, idx) => (
             <Grid item xs={12} sm={6} md={4} key={idx}>
               <Card sx={{ minWidth: 120, boxShadow: 1, borderRadius: 0, background: theme.palette.background.paper }}>

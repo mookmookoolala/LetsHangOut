@@ -61,7 +61,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
           sx={{ 
             width: 64, 
             height: 64, 
-            borderRadius: '50%', 
+            borderRadius: 0, 
             boxShadow: '0 8px 24px rgba(44, 100, 255, 0.15)', 
             cursor: 'pointer',
             transition: 'all 0.3s ease',
@@ -229,6 +229,24 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
             </ListItemButton>
             
             <ListItemButton 
+              onClick={() => window.dispatchEvent(new CustomEvent('open-manage-users-dialog'))}
+              sx={{ 
+                borderRadius: 0,
+                py: 1.2,
+                bgcolor: 'rgba(44, 100, 255, 0.08)',
+                '&:hover': { bgcolor: 'rgba(44, 100, 255, 0.15)' },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 40, color: 'primary.main' }}>
+                <GroupsIcon />
+              </ListItemIcon>
+              <ListItemText 
+                primary="Manage Users" 
+                primaryTypographyProps={{ fontWeight: 600 }}
+              />
+            </ListItemButton>
+            
+            <ListItemButton 
               onClick={onShowInvites}
               sx={{ 
                 borderRadius: 0,
@@ -252,7 +270,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                     right: 16,
                     bgcolor: 'error.main',
                     color: 'white',
-                    borderRadius: '50%',
+                    borderRadius: 0,
                     width: 24,
                     height: 24,
                     display: 'flex',
@@ -290,8 +308,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
           bgcolor: 'background.paper',
           color: 'text.primary',
           boxShadow: 1,
-          borderBottomLeftRadius: { xs: 0, sm: 0 },
-          borderBottomRightRadius: { xs: 0, sm: 0 },
+          borderRadius: 0,
           overflow: 'hidden',
         }}
       >
@@ -370,12 +387,13 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
         component="main"
         sx={{
           flexGrow: 1,
-          p: { xs: 2, sm: 3 },
-          pb: { xs: isMobile ? 10 : 2, sm: 3 }, // Increased bottom padding for taller mobile navigation
+          p: { xs: 1, sm: 3 },
+          pb: { xs: isMobile ? 12 : 2, sm: 3 }, // Increased bottom padding for taller mobile navigation
           width: { sm: `calc(100% - ${drawerWidth}px)` },
           bgcolor: 'grey.100',
           minHeight: '100vh',
           overflowX: 'hidden',
+          maxWidth: '100vw'
         }}
       >
         <Toolbar />
@@ -487,9 +505,9 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                     position: 'absolute',
                     bottom: 8,
                     left: '50%',
-                    width: 6,
-                    height: 6,
-                    borderRadius: '50%',
+                    width: 20,
+                    height: 3,
+                    borderRadius: 0,
                     backgroundColor: '#ffffff',
                     transform: 'translateX(-50%)',
                   }
@@ -520,7 +538,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                 minWidth: 0,
                 maxWidth: 85,
                 padding: '8px 0',
-                borderRadius: 2,
+                borderRadius: 0,
               }}
               className="touch-target"
             />
@@ -532,7 +550,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                 minWidth: 0,
                 maxWidth: 85,
                 padding: '8px 0',
-                borderRadius: 2,
+                borderRadius: 0,
               }}
               className="touch-target"
             />
@@ -544,7 +562,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                 minWidth: 0,
                 maxWidth: 85,
                 padding: '8px 0',
-                borderRadius: 2,
+                borderRadius: 0,
               }}
               className="touch-target"
             />
@@ -556,7 +574,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                 minWidth: 0,
                 maxWidth: 85,
                 padding: '8px 0',
-                borderRadius: 2,
+                borderRadius: 0,
               }}
               className="touch-target"
             />

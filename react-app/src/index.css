@@ -13,16 +13,16 @@ code {
 }
 
 /* Mobile-friendly defaults */
-@media (max-width: 600px) {
+@media (max-width: 767px) {
   input, select, textarea, button {
     font-size: 16px; /* prevent iOS zoom */
     min-height: 48px; /* larger touch target */
-    border-radius: 8px; /* rounded corners for better visual */
+    border-radius: 0; /* straight corners for professional look */
   }
   
   .MuiButton-root {
     min-height: 48px;
-    border-radius: 8px !important;
+    border-radius: 0 !important;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
     transition: transform 0.2s ease, box-shadow 0.2s ease !important;
   }
@@ -35,7 +35,7 @@ code {
   .MuiIconButton-root {
     width: 48px;
     height: 48px;
-    border-radius: 12px !important;
+    border-radius: 0 !important;
   }
   
   /* Enhanced mobile spacing */
@@ -50,7 +50,7 @@ code {
   /* Mobile card improvements */
   .MuiCard-root {
     margin: 8px !important;
-    border-radius: 12px !important;
+    border-radius: 0 !important;
   }
   
   /* Mobile form improvements */
@@ -61,7 +61,7 @@ code {
   /* Mobile button improvements */
   .MuiButton-root {
     margin: 8px 0 !important;
-    border-radius: 8px !important;
+    border-radius: 0 !important;
   }
   
   /* Mobile navigation improvements */
@@ -74,6 +74,26 @@ code {
   h2 { font-size: 1.5rem !important; }
   h3 { font-size: 1.25rem !important; }
   p { font-size: 1rem !important; line-height: 1.5 !important; }
+  
+  /* Budget panel mobile improvements */
+  .MuiTableContainer-root {
+    margin: 0 -8px !important;
+    width: calc(100% + 16px) !important;
+    max-width: calc(100% + 16px) !important;
+    overflow-x: auto !important;
+  }
+  
+  .MuiTable-root {
+    table-layout: fixed !important;
+  }
+  
+  /* Ensure content doesn't overflow on mobile */
+  .MuiContainer-root {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
   
   /* Mobile touch improvements */
   .touch-target {
@@ -97,6 +117,22 @@ code {
     transform: translate(-50%, -50%) scale(0) !important;
     opacity: 0 !important;
     transition: transform 0.3s ease, opacity 0.3s ease !important;
+  }
+  
+  /* Mobile fade-in animation */
+  .mobile-fade-in {
+    animation: mobileFadeIn 0.3s ease-out forwards !important;
+  }
+  
+  @keyframes mobileFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
   
   .touch-target:active::after {
