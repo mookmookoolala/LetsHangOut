@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -32,12 +32,6 @@ export function ManageUsersDialog({ open, onClose, group }) {
   const [newUsername, setNewUsername] = useState('');
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (open && group && group.id) {
-      fetchMembers();
-    }
-  }, [open, group, fetchMembers]);
-
   const fetchMembers = useCallback(() => {
     setLoading(true);
     fetch(`${API_URL}/group-members?group_id=${group.id}`)
@@ -52,6 +46,12 @@ export function ManageUsersDialog({ open, onClose, group }) {
         setLoading(false);
       });
   }, [group]);
+
+  useEffect(() => {
+    if (open && group && group.id) {
+      fetchMembers();
+    }
+  }, [open, group, fetchMembers]);
 
   const handleRemoveUser = (userId) => {
     setLoading(true);
