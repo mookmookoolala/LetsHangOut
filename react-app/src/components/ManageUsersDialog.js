@@ -36,9 +36,9 @@ export function ManageUsersDialog({ open, onClose, group }) {
     if (open && group && group.id) {
       fetchMembers();
     }
-  }, [open, group]);
+  }, [open, group, fetchMembers]);
 
-  const fetchMembers = () => {
+  const fetchMembers = useCallback(() => {
     setLoading(true);
     fetch(`${API_URL}/group-members?group_id=${group.id}`)
       .then(res => res.json())
@@ -51,7 +51,7 @@ export function ManageUsersDialog({ open, onClose, group }) {
         setError('Failed to load group members');
         setLoading(false);
       });
-  };
+  }, [group]);
 
   const handleRemoveUser = (userId) => {
     setLoading(true);

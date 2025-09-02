@@ -9,7 +9,7 @@ import { PendingInvites } from './PendingInvites';
 import { ManageUsersDialog } from './ManageUsersDialog';
 import PullToRefresh from './PullToRefresh';
 import {
-  Container, Paper, Grid, Typography, Button, Select, MenuItem, FormControl, Divider, useMediaQuery, TextField, InputLabel
+  Container, Paper, Grid, Typography, Button, Select, MenuItem, FormControl, Divider, useMediaQuery, TextField, InputLabel, Box
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import GroupsIcon from '@mui/icons-material/Groups';
