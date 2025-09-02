@@ -143,7 +143,7 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
             sx={{ 
               p: 5, 
               textAlign: 'center', 
-              borderRadius: 4, 
+              borderRadius: 0, 
               background: 'rgba(255, 255, 255, 0.9)',
               backdropFilter: 'blur(10px)',
               boxShadow: '0 20px 60px rgba(44, 100, 255, 0.15)',
@@ -191,20 +191,21 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
           </Paper>
         </Container>
       ) : (
-        <Container maxWidth="md" sx={{ py: isMobile ? 3 : 6 }}>
-          <Grid container spacing={isMobile ? 3 : 4} direction="column">
+        <Container maxWidth="md" sx={{ py: isMobile ? 2 : 6, px: isMobile ? 1 : 3, width: '100%' }}>
+          <Grid container spacing={isMobile ? 2 : 4} direction="column" sx={{ width: '100%', mx: 'auto', px: 0 }}>
             {/* Group Picker */}
             {userGroups.length > 1 && (
               <Grid item>
                 <Paper 
                   elevation={2} 
                   sx={{ 
-                    p: isMobile ? 2.5 : 3.5, 
-                    borderRadius: 3, 
+                    p: isMobile ? 2 : 3.5, 
+                    borderRadius: 0, 
                     display: 'flex', 
                     alignItems: 'center', 
-                    gap: 2, 
-                    flexWrap: isMobile ? 'wrap' : 'nowrap', 
+                    gap: isMobile ? 1 : 2, 
+                    flexDirection: isMobile ? 'column' : 'row', 
+                    width: '100%',
                     background: 'rgba(255, 255, 255, 0.9)',
                     backdropFilter: 'blur(10px)',
                     boxShadow: '0 10px 40px rgba(44, 100, 255, 0.1)',
@@ -230,29 +231,42 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                     fontWeight: 700, 
                     fontSize: 17, 
                     color: 'primary.main', 
-                    mr: 2,
+                    mr: isMobile ? 0 : 2,
+                    mb: isMobile ? 1 : 0,
                     display: 'flex',
                     alignItems: 'center',
                     gap: 1,
+                    width: isMobile ? '100%' : 'auto',
+                    justifyContent: isMobile ? 'center' : 'flex-start',
                   }}>
                     <GroupsIcon fontSize="small" />
                     Group:
                   </Typography>
                   <FormControl size="small" sx={{ 
                     minWidth: 150, 
-                    flex: 1,
+                    width: isMobile ? '100%' : 'auto',
+                    flex: isMobile ? 'none' : 1,
                     '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
+                      borderRadius: 0,
                       backgroundColor: 'rgba(255, 255, 255, 0.8)',
                     }
                   }}>
+
                     <InputLabel>Select Group</InputLabel>
                     <Select
-                      value={group.id}
+                      value={group && group.id ? group.id : ''}
                       label="Select Group"
                       onChange={e => {
-                        const selected = userGroups.find(g => String(g.id) === e.target.value);
+                        const selected = userGroups.find(g => String(g.id) === String(e.target.value));
                         if (selected && onSelectGroup) onSelectGroup(selected);
+                      }}
+                      MenuProps={{
+                        PaperProps: {
+                          style: {
+                            maxHeight: 300,
+                            width: isMobile ? '90%' : 'auto',
+                          },
+                        },
                       }}
                     >
                       {userGroups.map(g => (
@@ -264,11 +278,13 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                     variant="contained"
                     color="primary"
                     sx={{ 
-                      ml: 'auto', 
+                      ml: isMobile ? 0 : 'auto', 
                       fontWeight: 700, 
-                      borderRadius: 2, 
-                      minWidth: isMobile ? 140 : 160,
+                      borderRadius: 0, 
+                      minWidth: isMobile ? 'unset' : 160,
+                      width: isMobile ? '100%' : 'auto',
                       py: 1.2,
+                      mt: isMobile ? 1 : 0,
                     }}
                     onClick={handleCopy}
                   >
@@ -282,13 +298,14 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
               <Paper 
                 elevation={2} 
                 sx={{ 
-                  p: isMobile ? 3 : 4, 
-                  borderRadius: 3, 
+                  p: isMobile ? 2 : 4, 
+                  borderRadius: 0, 
                   background: 'rgba(255, 255, 255, 0.9)',
                   backdropFilter: 'blur(10px)',
                   boxShadow: '0 15px 50px rgba(44, 100, 255, 0.12)',
                   position: 'relative',
                   overflow: 'hidden',
+                  width: '100%',
                   '&::before': {
                     content: '""',
                     position: 'absolute',
@@ -305,7 +322,7 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                   sx={{ 
                     fontWeight: 800, 
                     color: 'text.primary', 
-                    mb: 3, 
+                    mb: 3,
                     textAlign: isMobile ? 'center' : 'left',
                     display: 'flex',
                     alignItems: 'center',
@@ -317,18 +334,23 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                   <GroupsIcon fontSize="large" sx={{ color: 'primary.main' }} />
                   Invite People
                 </Typography>
-                <Grid container spacing={3} direction={isMobile ? 'column' : 'row'} alignItems="center">
+                <Grid container spacing={isMobile ? 2 : 3} direction={isMobile ? 'column' : 'row'} alignItems="center">
                   <Grid item xs={12} sm={9}>
                     <TextField
                       value={inviteLink}
                       label="Invite Link"
                       fullWidth
-                      InputProps={{ readOnly: true }}
+                      InputProps={{ 
+                        readOnly: true,
+                        sx: {
+                          fontSize: isMobile ? '0.95rem' : 'inherit',
+                        }
+                      }}
                       size="medium"
                       sx={{ 
                         color: theme.palette.text.primary,
                         '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
+                          borderRadius: 0,
                           backgroundColor: 'rgba(255, 255, 255, 0.8)',
                           '&:hover': {
                             backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -347,9 +369,9 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       fullWidth={isMobile}
                       sx={{ 
                         fontWeight: 700, 
-                        borderRadius: 2, 
-                        minHeight: 48,
-                        py: 1.5,
+                        borderRadius: 0, 
+                        minHeight: isMobile ? 52 : 48,
+                        py: isMobile ? 1.8 : 1.5,
                         boxShadow: '0 4px 14px rgba(42, 108, 255, 0.25)',
                         '&:hover': {
                           boxShadow: '0 6px 20px rgba(42, 108, 255, 0.35)',
@@ -369,13 +391,14 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
               <Paper 
                 elevation={2} 
                 sx={{ 
-                  p: isMobile ? 3 : 4, 
-                  borderRadius: 3, 
+                  p: isMobile ? 2 : 4, 
+                  borderRadius: 0, 
                   background: 'rgba(255, 255, 255, 0.9)',
                   backdropFilter: 'blur(10px)',
                   boxShadow: '0 15px 50px rgba(44, 100, 255, 0.12)',
                   position: 'relative',
                   overflow: 'hidden',
+                  width: '100%',
                   '&::before': {
                     content: '""',
                     position: 'absolute',
@@ -408,7 +431,7 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                         elevation={0} 
                         sx={{ 
                           p: 2.5, 
-                          borderRadius: 2, 
+                          borderRadius: 0, 
                           background: 'rgba(255, 255, 255, 0.7)',
                           border: '1px solid rgba(230, 235, 255, 0.9)',
                           transition: 'all 0.2s ease-in-out',
@@ -434,9 +457,10 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                   <Paper 
                     elevation={2} 
                     sx={{ 
-                      p: isMobile ? 3 : 4, 
-                      borderRadius: 3, 
+                      p: isMobile ? 2 : 4, 
+                      borderRadius: 0, 
                       height: '100%', 
+                      width: '100%',
                       background: 'rgba(255, 255, 255, 0.9)',
                       backdropFilter: 'blur(10px)',
                       boxShadow: '0 15px 50px rgba(44, 100, 255, 0.12)',
@@ -444,8 +468,8 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       overflow: 'hidden',
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                       '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: '0 20px 60px rgba(44, 100, 255, 0.18)',
+                        transform: isMobile ? 'none' : 'translateY(-5px)',
+                        boxShadow: isMobile ? '0 15px 50px rgba(44, 100, 255, 0.12)' : '0 20px 60px rgba(44, 100, 255, 0.18)',
                       },
                       '&::before': {
                         content: '""',
@@ -463,10 +487,11 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       sx={{ 
                         fontWeight: 800, 
                         color: 'text.primary', 
-                        mb: 3,
+                        mb: isMobile ? 2 : 3,
                         display: 'flex',
                         alignItems: 'center',
                         gap: 1.5,
+                        fontSize: isMobile ? '1.2rem' : '1.5rem'
                       }}
                     >
                       Date Voting
@@ -478,9 +503,10 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                   <Paper 
                     elevation={2} 
                     sx={{ 
-                      p: isMobile ? 3 : 4, 
-                      borderRadius: 3, 
+                      p: isMobile ? 2 : 4, 
+                      borderRadius: 0, 
                       height: '100%', 
+                      width: '100%',
                       background: 'rgba(255, 255, 255, 0.9)',
                       backdropFilter: 'blur(10px)',
                       boxShadow: '0 15px 50px rgba(44, 100, 255, 0.12)',
@@ -488,8 +514,8 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       overflow: 'hidden',
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                       '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: '0 20px 60px rgba(44, 100, 255, 0.18)',
+                        transform: isMobile ? 'none' : 'translateY(-5px)',
+                        boxShadow: isMobile ? '0 15px 50px rgba(44, 100, 255, 0.12)' : '0 20px 60px rgba(44, 100, 255, 0.18)',
                       },
                       '&::before': {
                         content: '""',
@@ -507,10 +533,11 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       sx={{ 
                         fontWeight: 800, 
                         color: 'text.primary', 
-                        mb: 3,
+                        mb: isMobile ? 2 : 3,
                         display: 'flex',
                         alignItems: 'center',
                         gap: 1.5,
+                        fontSize: isMobile ? '1.2rem' : '1.5rem'
                       }}
                     >
                       Tasks
@@ -522,9 +549,10 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                   <Paper 
                     elevation={2} 
                     sx={{ 
-                      p: isMobile ? 3 : 4, 
-                      borderRadius: 3, 
+                      p: isMobile ? 2 : 4, 
+                      borderRadius: 0, 
                       height: '100%', 
+                      width: '100%',
                       background: 'rgba(255, 255, 255, 0.9)',
                       backdropFilter: 'blur(10px)',
                       boxShadow: '0 15px 50px rgba(44, 100, 255, 0.12)',
@@ -532,8 +560,8 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       overflow: 'hidden',
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                       '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: '0 20px 60px rgba(44, 100, 255, 0.18)',
+                        transform: isMobile ? 'none' : 'translateY(-5px)',
+                        boxShadow: isMobile ? '0 15px 50px rgba(44, 100, 255, 0.12)' : '0 20px 60px rgba(44, 100, 255, 0.18)',
                       },
                       '&::before': {
                         content: '""',
@@ -551,10 +579,11 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       sx={{ 
                         fontWeight: 800, 
                         color: 'text.primary', 
-                        mb: 3,
+                        mb: isMobile ? 2 : 3,
                         display: 'flex',
                         alignItems: 'center',
                         gap: 1.5,
+                        fontSize: isMobile ? '1.2rem' : '1.5rem'
                       }}
                     >
                       Budget
@@ -566,9 +595,10 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                   <Paper 
                     elevation={2} 
                     sx={{ 
-                      p: isMobile ? 3 : 4, 
-                      borderRadius: 3, 
+                      p: isMobile ? 2 : 4, 
+                      borderRadius: 0, 
                       height: '100%', 
+                      width: '100%',
                       background: 'rgba(255, 255, 255, 0.9)',
                       backdropFilter: 'blur(10px)',
                       boxShadow: '0 15px 50px rgba(44, 100, 255, 0.12)',
@@ -576,8 +606,8 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       overflow: 'hidden',
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
                       '&:hover': {
-                        transform: 'translateY(-5px)',
-                        boxShadow: '0 20px 60px rgba(44, 100, 255, 0.18)',
+                        transform: isMobile ? 'none' : 'translateY(-5px)',
+                        boxShadow: isMobile ? '0 15px 50px rgba(44, 100, 255, 0.12)' : '0 20px 60px rgba(44, 100, 255, 0.18)',
                       },
                       '&::before': {
                         content: '""',
@@ -595,10 +625,11 @@ export function Dashboard({ user, group, onLogout, onDeleteGroup, userGroups = [
                       sx={{ 
                         fontWeight: 800, 
                         color: 'text.primary', 
-                        mb: 3,
+                        mb: isMobile ? 2 : 3,
                         display: 'flex',
                         alignItems: 'center',
                         gap: 1.5,
+                        fontSize: isMobile ? '1.2rem' : '1.5rem'
                       }}
                     >
                       Group Chat

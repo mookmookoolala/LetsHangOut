@@ -85,7 +85,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                 to={link.to}
                 selected={isActive}
                 sx={{ 
-                  borderRadius: 2,
+                  borderRadius: 0,
                   py: 1.2,
                   transition: 'all 0.2s ease',
                 }}
@@ -213,7 +213,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
             <ListItemButton 
               onClick={() => window.dispatchEvent(new CustomEvent('open-invite-dialog'))}
               sx={{ 
-                borderRadius: 2,
+                borderRadius: 0,
                 py: 1.2,
                 bgcolor: 'rgba(44, 100, 255, 0.08)',
                 '&:hover': { bgcolor: 'rgba(44, 100, 255, 0.15)' },
@@ -231,7 +231,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
             <ListItemButton 
               onClick={onShowInvites}
               sx={{ 
-                borderRadius: 2,
+                borderRadius: 0,
                 py: 1.2,
                 bgcolor: inviteCount > 0 ? 'rgba(44, 100, 255, 0.15)' : 'rgba(44, 100, 255, 0.08)',
                 '&:hover': { bgcolor: 'rgba(44, 100, 255, 0.15)' },
@@ -290,6 +290,9 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
           bgcolor: 'background.paper',
           color: 'text.primary',
           boxShadow: 1,
+          borderBottomLeftRadius: { xs: 0, sm: 0 },
+          borderBottomRightRadius: { xs: 0, sm: 0 },
+          overflow: 'hidden',
         }}
       >
         <Toolbar>
@@ -302,7 +305,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
               mr: 2,
               display: { sm: 'none' },
               background: 'none',
-              borderRadius: 8,
+              borderRadius: 0,
               boxShadow: 'none',
               p: 1.2,
               minWidth: 40,
@@ -443,13 +446,12 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
             left: 0,
             right: 0,
             zIndex: 1000,
-            bgcolor: 'background.paper',
-            borderTop: 1,
-            borderColor: 'divider',
-            boxShadow: '0 -4px 15px rgba(0,0,0,0.1)',
+            bgcolor: 'primary.main',
+            background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
+            boxShadow: '0 -4px 15px rgba(0,0,0,0.15)',
             height: 70, // Increased height for better touch targets
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
+            borderTopLeftRadius: 0,
+            borderTopRightRadius: 0,
             overflow: 'hidden',
           }}
         >
@@ -461,23 +463,24 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
             showLabels
             sx={{
               height: '100%',
+              background: 'transparent',
               '& .MuiBottomNavigationAction-root': {
                 minWidth: 'auto',
                 py: 1.5,
                 transition: 'all 0.2s ease',
                 '&.Mui-selected': {
-                  color: 'primary.main',
+                  color: '#ffffff',
                   '& .MuiBottomNavigationAction-label': {
                     fontSize: '0.85rem',
-                    color: 'primary.main',
+                    color: '#ffffff',
                     fontWeight: 700,
                     transition: 'transform 0.2s ease',
                     transform: 'translateY(-2px) scale(1.05)',
                   },
                   '& .MuiSvgIcon-root': {
-                    color: 'primary.main',
+                    color: '#ffffff',
                     transform: 'translateY(-2px) scale(1.15)',
-                    filter: 'drop-shadow(0 2px 4px rgba(44,100,255,0.2))',
+                    filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))',
                   },
                   '&::after': {
                     content: '""',
@@ -487,7 +490,7 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                     width: 6,
                     height: 6,
                     borderRadius: '50%',
-                    backgroundColor: 'primary.main',
+                    backgroundColor: '#ffffff',
                     transform: 'translateX(-50%)',
                   }
                 },
@@ -495,16 +498,16 @@ export default function DashboardLayout({ children, members, onLogout, onShowInv
                   fontSize: '0.8rem',
                   marginTop: 0.5,
                   fontWeight: 600,
-                  color: 'text.secondary',
+                  color: 'rgba(255,255,255,0.8)',
                   transition: 'all 0.2s ease',
                 },
                 '& .MuiSvgIcon-root': {
                   fontSize: '1.4rem',
-                  color: 'text.secondary',
+                  color: 'rgba(255,255,255,0.8)',
                   transition: 'all 0.2s ease',
                 },
                 '&:active': {
-                  backgroundColor: 'rgba(44,100,255,0.08)',
+                  backgroundColor: 'rgba(255,255,255,0.15)',
                 }
               },
             }}

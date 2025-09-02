@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Box, Typography, Button, TextField, Select, MenuItem, FormControl, InputLabel, Card, CardContent, Grid, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, OutlinedInput, Divider, Container, Avatar
+  Box, Typography, Button, TextField, Select, MenuItem, FormControl, InputLabel, Card, CardContent, Grid, Dialog, DialogTitle, DialogContent, DialogActions, useMediaQuery, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, OutlinedInput, Divider, Container, Avatar, Alert, Snackbar
 } from '@mui/material';
-import { Add as AddIcon, Delete as DeleteIcon, PersonAdd as PersonAddIcon, Search as SearchIcon } from '@mui/icons-material';
+import { Add as AddIcon, Delete as DeleteIcon, PersonAdd as PersonAddIcon, Search as SearchIcon, SwapHoriz as SwapHorizIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
@@ -19,6 +19,12 @@ export function BudgetPanel({ group, user }) {
   const [newExternalName, setNewExternalName] = useState('');
   const [adding, setAdding] = useState(false);
   const [splitSearch, setSplitSearch] = useState('');
+  const [showSettleDialog, setShowSettleDialog] = useState(false);
+  const [settleFrom, setSettleFrom] = useState('');
+  const [settleTo, setSettleTo] = useState('');
+  const [settleAmount, setSettleAmount] = useState('');
+  const [settling, setSettling] = useState(false);
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -48,6 +54,46 @@ export function BudgetPanel({ group, user }) {
         .then(res => res.json())
         .then(data => setBalances(Array.isArray(data) ? data : []))
         .catch(() => setBalances([]));
+    }
+  };
+
+  const handleSettleBalance = () => {
+    if (!settleFrom || !settleTo || !settleAmount || parseFloat(settleAmount) <= 0) {
+      setSnackbar({ open: true, message: 'Please fill all fields with valid values', severity: 'error' });
+      return;
+    }
+
+    setSettling(true);
+    
+    fetch(`${API_URL}/settle-balance`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        group_id: group.id,
+        from_user_id: settleFrom,
+        to_user_id: settleTo,
+        amount: parseFloat(settleAmount)
+      })
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to settle balance');
+        return res.json();
+      })
+      .then(() => {
+        setSnackbar({ open: true, message: 'Balance settled successfully!', severity: 'success' });
+        setShowSettleDialog(false);
+        setSettleFrom('');
+        setSettleTo('');
+        setSettleAmount('');
+        refresh();
+      })
+      .catch(err => {
+        console.error(err);
+        setSnackbar({ open: true, message: 'Failed to settle balance. Please try again.', severity: 'error' });
+      })
+      .finally(() => {
+        setSettling(false);
+      });
     }
   };
 
@@ -105,7 +151,7 @@ export function BudgetPanel({ group, user }) {
 
   return (
     <Container maxWidth="sm" sx={{ py: isMobile ? 1 : 4 }}>
-      <Paper elevation={2} sx={{ p: isMobile ? 2 : 4, borderRadius: 3, background: theme.palette.background.paper }}>
+      <Paper elevation={2} sx={{ p: isMobile ? 2 : 4, borderRadius: 0, background: theme.palette.background.paper }}>
         <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', textAlign: 'center', fontSize: isMobile ? 28 : 24 }}>Budget Panel</Typography>
         <Divider sx={{ mb: 3 }} />
         <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Add Expense</Typography>
@@ -226,7 +272,7 @@ export function BudgetPanel({ group, user }) {
               onClick={handleAddExpense}
               disabled={adding}
               fullWidth
-              sx={{ fontSize: 18, py: 1.2, borderRadius: 2, minWidth: 120 }}
+              sx={{ fontSize: 18, py: 1.2, borderRadius: 0, minWidth: 120 }}
             >
               Add
             </Button>
@@ -235,7 +281,7 @@ export function BudgetPanel({ group, user }) {
         <Button
           variant="outlined"
           startIcon={<PersonAddIcon />}
-          sx={{ mt: 2, mb: 2, fontSize: 17, py: 1.1, borderRadius: 2 }}
+          sx={{ mt: 2, mb: 2, fontSize: 17, py: 1.1, borderRadius: 0 }}
           fullWidth
           onClick={() => setShowAddExternal(true)}
         >
@@ -303,11 +349,22 @@ export function BudgetPanel({ group, user }) {
           </Table>
         </TableContainer>
         <Divider sx={{ my: 3 }} />
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Balances</Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Balances</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<SwapHorizIcon />}
+            onClick={() => setShowSettleDialog(true)}
+            sx={{ borderRadius: 0, py: 1 }}
+          >
+            Settle Balance
+          </Button>
+        </Box>
         <Grid container spacing={2} direction={isMobile ? 'column' : 'row'}>
           {balances.map((bal, idx) => (
             <Grid item xs={12} sm={6} md={4} key={idx}>
-              <Card sx={{ minWidth: 120, boxShadow: 1, borderRadius: 2, background: theme.palette.background.paper }}>
+              <Card sx={{ minWidth: 120, boxShadow: 1, borderRadius: 0, background: theme.palette.background.paper }}>
                 <CardContent sx={{ textAlign: 'center' }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 700, color: theme.palette.text.primary, fontSize: isMobile ? 18 : 16 }}>{bal.username}</Typography>
                   <Typography variant="body1" sx={{ color: bal.balance < 0 ? theme.palette.error.main : theme.palette.success.main, fontWeight: 700, fontSize: isMobile ? 20 : 18 }}>
@@ -318,7 +375,93 @@ export function BudgetPanel({ group, user }) {
             </Grid>
           ))}
         </Grid>
+        
+        <Dialog open={showSettleDialog} onClose={() => !settling && setShowSettleDialog(false)} fullWidth maxWidth="xs">
+          <DialogTitle>Settle Balance</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <FormControl fullWidth sx={{ mt: 1 }}>
+                  <InputLabel>From User</InputLabel>
+                  <Select
+                    value={settleFrom}
+                    onChange={(e) => setSettleFrom(e.target.value)}
+                    label="From User"
+                    disabled={settling}
+                  >
+                    {members.map(m => (
+                      <MenuItem key={m.id} value={m.id}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar sx={{ width: 24, height: 24, mr: 1 }}>{m.username[0]}</Avatar>
+                          {m.username}
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel>To User</InputLabel>
+                  <Select
+                    value={settleTo}
+                    onChange={(e) => setSettleTo(e.target.value)}
+                    label="To User"
+                    disabled={settling}
+                  >
+                    {members.map(m => (
+                      <MenuItem key={m.id} value={m.id} disabled={m.id === settleFrom}>
+                        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <Avatar sx={{ width: 24, height: 24, mr: 1 }}>{m.username[0]}</Avatar>
+                          {m.username}
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label="Amount"
+                  type="number"
+                  value={settleAmount}
+                  onChange={(e) => setSettleAmount(e.target.value)}
+                  fullWidth
+                  disabled={settling}
+                  InputProps={{
+                    startAdornment: <Typography sx={{ mr: 1 }}>$</Typography>,
+                  }}
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setShowSettleDialog(false)} disabled={settling}>Cancel</Button>
+            <Button 
+              onClick={handleSettleBalance} 
+              variant="contained" 
+              disabled={settling || !settleFrom || !settleTo || !settleAmount}
+            >
+              {settling ? 'Processing...' : 'Settle'}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </Container>
+    <Snackbar 
+      open={snackbar.open} 
+      autoHideDuration={6000} 
+      onClose={() => setSnackbar({...snackbar, open: false})}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+    >
+      <Alert 
+        onClose={() => setSnackbar({...snackbar, open: false})} 
+        severity={snackbar.severity} 
+        variant="filled"
+        sx={{ width: '100%' }}
+      >
+        {snackbar.message}
+      </Alert>
+    </Snackbar>
   );
 }

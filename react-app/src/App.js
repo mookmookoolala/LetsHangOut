@@ -599,18 +599,36 @@ function App() {
                     onDeleteGroup={handleSidebarDeleteGroup}
                   />
                 ) : user && !userGroupsLoading ? (
-                  <div className="centered-container">
-                    <h2>Welcome, {user.username}!</h2>
+                  <div className="centered-container" style={{padding: isMobile ? '0 16px' : '0'}}>
+                    <h2 style={{color: '#1a237e', marginBottom: isMobile ? '16px' : '24px', fontSize: isMobile ? '1.8rem' : '2rem'}}>Welcome, {user.username}!</h2>
+                    {!selectedGroup && <div style={{marginTop: isMobile ? 24 : 32, marginBottom: isMobile ? 24 : 32, textAlign: 'center', padding: isMobile ? '20px 16px' : '24px', backgroundColor: 'rgba(236, 239, 255, 0.7)', borderRadius: 16, boxShadow: '0 2px 12px rgba(0,0,0,0.04)'}}>
+                      <h3 style={{color: '#1a237e', fontSize: isMobile ? '1.4rem' : '1.6rem', marginBottom: 12}}>No group selected</h3>
+                      <p style={{color: '#424242', fontSize: isMobile ? '1.05rem' : '1.1rem', maxWidth: 400, margin: '0 auto'}}>Please select a group to continue</p>
+                    </div>}
                     {userGroups && userGroups.length > 0 ? (
                       <>
-                        <h3>Choose a group or create/join a new one:</h3>
-                        <div style={{marginBottom: 20}}>
+                        <h3 style={{color: '#444', marginBottom: isMobile ? '16px' : '24px', fontSize: isMobile ? '1.3rem' : '1.5rem', textAlign: 'center'}}>Choose a group or create/join a new one:</h3>
+                        <div style={{marginBottom: 24, width: '100%', maxWidth: 500, margin: '0 auto'}}>
                           <select 
                             onChange={(e) => {
                               const selected = userGroups.find(g => g.id === parseInt(e.target.value));
                               if (selected) setSelectedGroup(selected);
                             }}
-                            style={{padding: '8px 12px', marginRight: 10, borderRadius: 6, border: '1.5px solid #1a237e', fontSize: 16, color: '#1a237e', fontWeight: 600}}
+                            style={{
+                              padding: isMobile ? '14px 16px' : '12px 16px', 
+                              borderRadius: 12, 
+                              border: '2px solid #1a237e', 
+                              fontSize: isMobile ? 18 : 16, 
+                              color: '#1a237e', 
+                              fontWeight: 600,
+                              width: '100%',
+                              boxShadow: '0 3px 10px rgba(0,0,0,0.08)',
+                              appearance: 'none',
+                              backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%231a237e\' stroke-width=\'2\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpolyline points=\'6 9 12 15 18 9\'%3e%3c/polyline%3e%3c/svg%3e")',
+                              backgroundRepeat: 'no-repeat',
+                              backgroundPosition: 'right 12px center',
+                              backgroundSize: '18px',
+                            }}
                           >
                             <option value="">Select existing group...</option>
                             {userGroups.map(g => (
@@ -618,22 +636,31 @@ function App() {
                             ))}
                           </select>
                         </div>
-                        <div style={{marginBottom: 20, display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center'}}>
+                        <div style={{marginBottom: 24, display: 'flex', gap: isMobile ? 16 : 20, flexWrap: 'wrap', justifyContent: 'center', width: '100%', maxWidth: 500}}>
                           <Button
                             variant="contained"
                             sx={{
                               background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
                               color: '#fff',
                               fontWeight: 700,
-                              borderRadius: 2,
-                              fontSize: isMobile ? '1.08rem' : '1.12rem',
-                              py: 1.1,
-                              px: 3,
-                              boxShadow: 2,
+                              borderRadius: 10,
+                              fontSize: isMobile ? '1.1rem' : '1.15rem',
+                              py: isMobile ? 1.5 : 1.2,
+                              px: isMobile ? 4 : 3,
+                              boxShadow: '0 4px 15px rgba(42, 108, 255, 0.25)',
                               textTransform: 'none',
+                              flex: isMobile ? '1 1 100%' : '1 1 auto',
+                              minHeight: isMobile ? 56 : 48,
                               '&:hover': {
                                 background: 'linear-gradient(90deg, #6c47ff 0%, #2a6cff 100%)',
+                                boxShadow: '0 6px 20px rgba(42, 108, 255, 0.35)',
+                                transform: 'translateY(-2px)',
                               },
+                              '&:active': {
+                                transform: 'translateY(1px)',
+                                boxShadow: '0 2px 10px rgba(42, 108, 255, 0.2)',
+                              },
+                              transition: 'all 0.2s ease',
                             }}
                             onClick={() => setShowJoin(false)}
                           >
@@ -644,17 +671,25 @@ function App() {
                             sx={{
                               color: '#1a237e',
                               borderColor: '#1a237e',
+                              borderWidth: 2,
                               fontWeight: 700,
-                              borderRadius: 2,
-                              fontSize: isMobile ? '1.05rem' : '1.1rem',
-                              py: 1.1,
-                              px: 3,
+                              borderRadius: 10,
+                              fontSize: isMobile ? '1.1rem' : '1.15rem',
+                              py: isMobile ? 1.4 : 1.1,
+                              px: isMobile ? 4 : 3,
                               textTransform: 'none',
+                              flex: isMobile ? '1 1 100%' : '1 1 auto',
+                              minHeight: isMobile ? 56 : 48,
                               '&:hover': {
                                 background: 'rgba(26,35,126,0.08)',
-                                borderColor: '#1a237e',
+                                borderColor: '#2a6cff',
                                 color: '#2a6cff',
+                                transform: 'translateY(-2px)',
                               },
+                              '&:active': {
+                                transform: 'translateY(1px)',
+                              },
+                              transition: 'all 0.2s ease',
                             }}
                             onClick={() => setShowJoin(true)}
                           >
@@ -665,22 +700,31 @@ function App() {
                     ) : (
                       <>
                         <h3>You are not in any groups yet.</h3>
-                        <div style={{marginBottom: 20, display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center'}}>
+                        <div style={{marginBottom: 24, display: 'flex', gap: isMobile ? 16 : 20, flexWrap: 'wrap', justifyContent: 'center', width: '100%', maxWidth: 500}}>
                           <Button
                             variant="contained"
                             sx={{
                               background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
                               color: '#fff',
                               fontWeight: 700,
-                              borderRadius: 2,
-                              fontSize: isMobile ? '1.08rem' : '1.12rem',
-                              py: 1.1,
-                              px: 3,
-                              boxShadow: 2,
+                              borderRadius: 10,
+                              fontSize: isMobile ? '1.1rem' : '1.15rem',
+                              py: isMobile ? 1.5 : 1.2,
+                              px: isMobile ? 4 : 3,
+                              boxShadow: '0 4px 15px rgba(42, 108, 255, 0.25)',
                               textTransform: 'none',
+                              flex: isMobile ? '1 1 100%' : '1 1 auto',
+                              minHeight: isMobile ? 56 : 48,
                               '&:hover': {
                                 background: 'linear-gradient(90deg, #6c47ff 0%, #2a6cff 100%)',
+                                boxShadow: '0 6px 20px rgba(42, 108, 255, 0.35)',
+                                transform: 'translateY(-2px)',
                               },
+                              '&:active': {
+                                transform: 'translateY(1px)',
+                                boxShadow: '0 2px 10px rgba(42, 108, 255, 0.2)',
+                              },
+                              transition: 'all 0.2s ease',
                             }}
                             onClick={() => setShowJoin(false)}
                           >
@@ -691,17 +735,25 @@ function App() {
                             sx={{
                               color: '#1a237e',
                               borderColor: '#1a237e',
+                              borderWidth: 2,
                               fontWeight: 700,
-                              borderRadius: 2,
-                              fontSize: isMobile ? '1.05rem' : '1.1rem',
-                              py: 1.1,
-                              px: 3,
+                              borderRadius: 10,
+                              fontSize: isMobile ? '1.1rem' : '1.15rem',
+                              py: isMobile ? 1.4 : 1.1,
+                              px: isMobile ? 4 : 3,
                               textTransform: 'none',
+                              flex: isMobile ? '1 1 100%' : '1 1 auto',
+                              minHeight: isMobile ? 56 : 48,
                               '&:hover': {
                                 background: 'rgba(26,35,126,0.08)',
-                                borderColor: '#1a237e',
+                                borderColor: '#2a6cff',
                                 color: '#2a6cff',
+                                transform: 'translateY(-2px)',
                               },
+                              '&:active': {
+                                transform: 'translateY(1px)',
+                              },
+                              transition: 'all 0.2s ease',
                             }}
                             onClick={() => setShowJoin(true)}
                           >

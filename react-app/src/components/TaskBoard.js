@@ -211,7 +211,7 @@ export function TaskBoard({ group, user }) {
             <option value="">Assignee</option>
             {members.map(m => <option key={m.id} value={m.id}>{m.username}</option>)}
           </select>
-          <Button className="btn-primary" onClick={handleAddTask}>Add Task</Button>
+          <Button className="btn-primary" onClick={handleAddTask} sx={{ borderRadius: 0 }}>Add Task</Button>
         </div>
         <DragDropContext onDragEnd={onDragEnd}>
           {statusGroups.map((group) => (
@@ -434,4 +434,4 @@ export function TaskBoard({ group, user }) {
       </CardContent>
     </Card>
   );
-} 
+}

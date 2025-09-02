@@ -20,7 +20,7 @@ export function CreateGroup({ onCreate }) {
       sx={{
         maxWidth: 500,
         width: '100%',
-        borderRadius: 3,
+        borderRadius: 0,
         boxShadow: '0 4px 20px rgba(44,100,255,0.08)',
         background: 'rgba(255,255,255,0.9)',
         backdropFilter: 'blur(8px)',
@@ -37,8 +37,8 @@ export function CreateGroup({ onCreate }) {
           value={groupName}
           onChange={e => setGroupName(e.target.value)}
           fullWidth
-          sx={{ mb: 2, borderRadius: 2, background: '#f7f9fc' }}
-          InputProps={{ style: { borderRadius: 10, color: '#1a237e' } }}
+          sx={{ mb: 2, borderRadius: 0, background: '#f7f9fc' }}
+          InputProps={{ style: { borderRadius: 0, color: '#1a237e' } }}
           InputLabelProps={{ style: { color: '#1a237e', fontWeight: 600 } }}
         />
         <FormControlLabel
@@ -61,7 +61,7 @@ export function CreateGroup({ onCreate }) {
             background: 'linear-gradient(90deg, #2a6cff 0%, #6c47ff 100%)',
             color: '#fff',
             fontWeight: 700,
-            borderRadius: 2,
+            borderRadius: 0,
             fontSize: isMobile ? '1.1rem' : '1.15rem',
             py: 1.2,
             boxShadow: 2,
