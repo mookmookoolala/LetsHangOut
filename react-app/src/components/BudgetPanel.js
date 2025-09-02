@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8085';
 
-export function BudgetPanel({ group, user }) {
+export const BudgetPanel = ({ group, user }) => {
   const [members, setMembers] = useState([]);
   const [expenses, setExpenses] = useState([]);
   const [balances, setBalances] = useState([]);
@@ -94,7 +94,6 @@ export function BudgetPanel({ group, user }) {
       .finally(() => {
         setSettling(false);
       });
-    }
   };
 
   const handleAddExpense = () => {
@@ -149,13 +148,15 @@ export function BudgetPanel({ group, user }) {
     }
   };
 
+  // The component's return statement
   return (
-    <Container maxWidth="sm" sx={{ py: isMobile ? 1 : 4 }}>
-      <Paper elevation={2} sx={{ p: isMobile ? 2 : 4, borderRadius: 0, background: theme.palette.background.paper }}>
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', textAlign: 'center', fontSize: isMobile ? 28 : 24 }}>Budget Panel</Typography>
-        <Divider sx={{ mb: 3 }} />
-        <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Add Expense</Typography>
-        <Grid container spacing={2} alignItems="center" direction="column">
+    <React.Fragment>
+      <Container maxWidth="sm" sx={{ py: isMobile ? 1 : 4 }}>
+        <Paper elevation={2} sx={{ p: isMobile ? 2 : 4, borderRadius: 0, background: theme.palette.background.paper }}>
+          <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', textAlign: 'center', fontSize: isMobile ? 28 : 24 }}>Budget Panel</Typography>
+          <Divider sx={{ mb: 3 }} />
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 700, color: 'primary.main', fontSize: isMobile ? 22 : 20 }}>Add Expense</Typography>
+          <Grid container spacing={2} alignItems="center" direction="column">
           <Grid item xs={12} style={{ width: '100%' }}>
             <TextField
               label="Description"
@@ -463,5 +464,6 @@ export function BudgetPanel({ group, user }) {
         {snackbar.message}
       </Alert>
     </Snackbar>
+    </React.Fragment>
   );
-}
+};

@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { keyframes } from '@emotion/react';
 
-const pullDownAnimation = keyframes`
-  0% { transform: translateY(0); }
-  100% { transform: translateY(70px); }
-`;
+// Animation keyframes for future use if needed
+// const pullDownAnimation = keyframes`
+//   0% { transform: translateY(0); }
+//   100% { transform: translateY(70px); }
+// `;
 
 const releaseAnimation = keyframes`
   0% { transform: translateY(70px); }

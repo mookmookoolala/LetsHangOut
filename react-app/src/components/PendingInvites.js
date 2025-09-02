@@ -22,13 +22,7 @@ export function PendingInvites({ open, onClose, userId, onAcceptInvite }) {
   const [error, setError] = useState('');
   const [processingInvite, setProcessingInvite] = useState(null);
 
-  useEffect(() => {
-    if (open && userId) {
-      fetchInvites();
-    }
-  }, [open, userId]);
-
-  const fetchInvites = () => {
+  const fetchInvites = React.useCallback(() => {
     setLoading(true);
     setError('');
 
@@ -48,7 +42,13 @@ export function PendingInvites({ open, onClose, userId, onAcceptInvite }) {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (open && userId) {
+      fetchInvites();
+    }
+  }, [open, userId, fetchInvites]);
 
   const handleRespondToInvite = (inviteId, accept) => {
     setProcessingInvite(inviteId);
